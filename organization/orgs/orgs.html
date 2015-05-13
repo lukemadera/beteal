@@ -1,16 +1,15 @@
 <template name="orgs">
-
+  <div class='padding'>
   {{#each organizations}}
     <div class='orgs-org'>
-      <div class='h3'>{{name}}</div>
-      <div class='flexbox'>
-        <div class='flex1'>{{locations[0].city}}</div>
-        <div class='flex1'>{{locations[0].state}}</div>
-        <div class='flex1'>{{locations[0].country}}</div>
-      </div>
-      <div>{{purpose}}</div>
+      <a href='/org-edit?organizationId={{_id}}' class='a-div'>
+        <div class='h3'>{{name}}</div>
+        <div>{{xDisplay.location.city}}, {{xDisplay.location.state}} {{xDisplay.location.country}}</div>
+        <div>{{purpose}}</div>
+      </a>
     </div>
   {{/each}}
+  </div>
 
   <div class='margin-t center'>
     <a class='a-div btn btn-primary' href='/org-edit'>Add New</a>

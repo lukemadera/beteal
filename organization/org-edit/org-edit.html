@@ -1,12 +1,14 @@
 <template name="orgEdit">
 
-  {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
-    {{> afQuickField name="name"}}
-    {{> afQuickField name="purpose"}}
-    {{> afQuickField type="googleplace" name="locations.0" label="Location"}}
-    <div class='margin-t center'>
-      <div class='btn btn-primary org-edit-save-btn'>Save</div>
-    </div>
-  {{/autoForm}}
+  <div class='org-edit-form'>
+    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
+      {{> afQuickField name="name"}}
+      {{> afQuickField name="purpose"}}
+      {{> afQuickField type="googleplace" name="locations.0" label="Location"}}
+      <div class='margin-t center'>
+        <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>
+      </div>
+    {{/autoForm}}
+  </div>
   
 </template>

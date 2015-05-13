@@ -1,6 +1,5 @@
 Meteor.methods({
   saveOrganization: function(doc, docId) {
-    console.log(doc); //TESTING
 
     if(docId) {
       var modifier =doc;
