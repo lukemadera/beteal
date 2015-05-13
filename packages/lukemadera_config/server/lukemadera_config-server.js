@@ -1,9 +1,9 @@
 Config.email =function(params) {
-  var appName ='todoseedDev';
-  var emailDomain ='todoseeddev.meteor.com';
+  var appName ='BeTealDev';
+  var emailDomain ='betealdev.meteor.com';
   if(Config.ENV ==='prod') {
-    appName ='todoseed';
-    emailDomain ='todoseed.meteor.com';
+    appName ='BeTeal';
+    emailDomain ='beteal.meteor.com';
   }
   var ret ={
     "addresses": {
