@@ -93,8 +93,8 @@
         "lng": "{Number}",
         "street": "{String}",
         "city": "{String}",
-        "state": "{String}",
-        "zip": "{String}",
+        "state": "{String} [could be province or region for other countries]",
+        "zip": "{String} [could be postal code for other countries]",
         "country": "{String}"
       }
     ],

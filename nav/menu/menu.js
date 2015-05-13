@@ -31,6 +31,11 @@ if (Meteor.isClient){
     title: "Home",
     routeTo: "home"
   };
+  var menuItemOrgs ={
+    icon: "fa fa-building",
+    title: "Organizations",
+    routeTo: "orgs"
+  };
   var menuItems = [
     menuItemHome,
     {
@@ -43,6 +48,7 @@ if (Meteor.isClient){
     //   title: "Dev Test Test",
     //   routeTo: "devTestTest"
     // },
+    menuItemOrgs
   ];
 
   Template.navMenu.helpers({
@@ -74,7 +80,8 @@ if (Meteor.isClient){
     menuLoggedOut: function() {
       return [
         menuItemLanding,
-        menuItemLogin
+        menuItemLogin,
+        menuItemOrgs
       ];
     },
     menuItemLogout: function() {

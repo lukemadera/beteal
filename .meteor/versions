@@ -38,6 +38,7 @@ localstorage@1.0.3
 logging@1.0.7
 lukemadera:accounts-password@0.0.1
 lukemadera:auth@0.0.1
+lukemadera:autoform-googleplace@1.0.2
 lukemadera:config@0.0.1
 lukemadera:mocks@0.0.1
 lukemadera:notify@0.0.1

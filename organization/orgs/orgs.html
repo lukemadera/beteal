@@ -1,0 +1,19 @@
+<template name="orgs">
+
+  {{#each organizations}}
+    <div class='orgs-org'>
+      <div class='h3'>{{name}}</div>
+      <div class='flexbox'>
+        <div class='flex1'>{{locations[0].city}}</div>
+        <div class='flex1'>{{locations[0].state}}</div>
+        <div class='flex1'>{{locations[0].country}}</div>
+      </div>
+      <div>{{purpose}}</div>
+    </div>
+  {{/each}}
+
+  <div class='margin-t center'>
+    <a class='a-div btn btn-primary' href='/org-edit'>Add New</a>
+  </div>
+  
+</template>

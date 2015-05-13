@@ -94,6 +94,16 @@ if(Meteor.isClient){
   navConfig.home.url ='';
   navConfig.home.auth ={};
 
+  navConfig.orgs =EJSON.clone(navDefault);
+  navConfig.orgs.url = 'orgs';
+  navConfig.orgs.title.html ='Organizations';
+  navConfig.orgs.auth ={};
+
+  navConfig.orgedit =EJSON.clone(navDefault);
+  navConfig.orgedit.url = 'org-edit';
+  navConfig.orgedit.title.html ='Organization';
+  navConfig.orgedit.auth ={};
+
   Session.set('navUpdated', false);
 
   //set default
