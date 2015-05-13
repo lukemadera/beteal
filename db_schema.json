@@ -76,5 +76,70 @@
       }
     ],
     "notificationCount": "{Number} Nearly derived field for number of messages above that are unread. BUT gets reset to 0 each time they view notifications, even if they still have unread messages. So basically, each time user gets a new unread message (in app notification), increment this counter and each time they view notifications, set it to 0."
+  },
+  "organizations": {
+    "_id": "{String}",
+    "name": "{String}",
+    "teamMembers": [
+      {
+        "userId": "{String}",
+        "role": "{String}"
+      }
+    ],
+    "locations": [
+      {
+        "fullAddress": "{String}",
+        "lat": "{Number}",
+        "lng": "{Number}",
+        "street": "{String}",
+        "city": "{String}",
+        "state": "{String}",
+        "zip": "{String}",
+        "country": "{String}"
+      }
+    ],
+    "links": [
+      {
+        "url": "{String}"
+      }
+    ],
+    "purpose": "{String}",
+    "tags": [
+      {
+        "tagId": "{String}"
+      }
+    ],
+    "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00",
+    "updatedAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00"
+  },
+  "tags": {
+    "_id": "{String}",
+    "name": "{String}",
+    "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00"
+  },
+  "people": {
+    "_id": "{String}",
+    "userId": "{String}",
+    "address": {
+      "fullAddress": "{String}",
+      "lat": "{Number}",
+      "lng": "{Number}",
+      "street": "{String}",
+      "city": "{String}",
+      "state": "{String}",
+      "zip": "{String}",
+      "country": "{String}"
+    },
+    "tags": [
+      {
+        "tagId": "{String}"
+      }
+    ],
+    "links": [
+      {
+        "url": "{String}"
+      }
+    ],
+    "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00"
   }
 }
