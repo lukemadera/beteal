@@ -34,7 +34,7 @@ http://stackoverflow.com/questions/28727155/algorithm-mysql-get-all-points-withi
     ret.latMax =latRadians +radDist;
 
     if(ret.latMin > MIN_LAT && ret.latMax < MAX_LAT) {
-      var lngDelta =Math.asin(Math.sin(radDist) / Math.cos(radLat));
+      var lngDelta =Math.asin(Math.sin(radDist) / Math.cos(latRadians));
       ret.lngMin =lngRadians - lngDelta;
       if(ret.lngMin < MIN_LNG) {
         ret.lngMin += 2 * Math.PI;
