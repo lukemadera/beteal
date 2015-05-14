@@ -1,18 +1,41 @@
 <template name="orgs">
-  <div class='padding'>
-  {{#each organizations}}
-    <div class='orgs-org'>
-      <a href='/org-edit?organizationId={{_id}}' class='a-div'>
-        <div class='h3'>{{name}}</div>
-        <div>{{xDisplay.location.city}}, {{xDisplay.location.state}} {{xDisplay.location.country}}</div>
-        <div>{{purpose}}</div>
-      </a>
-    </div>
-  {{/each}}
+  <div class='orgs-filters'>
+    {{#autoForm schema="OrgsFiltersSchema" id=ids.form }}
+      <div class='orgs-filters-show-inactive list-header padding pointer'>More filters</div>
+      {{#each filters}}
+        {{#if visible}}
+          <div class='list padding'>
+            {{> Template.dynamic template=template}}
+          </div>
+        {{/if}}
+      {{/each}}
+      <div class='margin-t center'>
+        <div class='btn btn-primary orgs-filters-search'>Search</div>
+      </div>
+    {{/autoForm}}
   </div>
 
-  <div class='margin-t center'>
-    <a class='a-div btn btn-primary' href='/org-edit'>Add New</a>
+  <div class='orgs-results margin-b'>
+    {{#each orgs.orgs}}
+      <div class='orgs-org padding'>
+        <a href='/org-edit?organizationId={{_id}}' class='a-div'>
+          <div class='h3'>{{name}}</div>
+          <div>{{xDisplay.location.city}}, {{xDisplay.location.state}} {{xDisplay.location.country}}</div>
+          <div>{{purpose}}</div>
+        </a>
+      </div>
+    {{/each}}
   </div>
+
+  {{#if orgs.hasOrgs}}
+  {{else}}
+    <div class='margin-t center'>
+      <div>No results.. Try broadening your search criteria or <a class='' href='/org-edit'>add a new organization</a>.</div>
+    </div>
+  {{/if}}
   
+</template>
+
+<template name="orgsFilterName">
+  {{> afQuickField name="name" class="orgs-filter-name-input"}}
 </template>

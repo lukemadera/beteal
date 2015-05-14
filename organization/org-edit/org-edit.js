@@ -3,7 +3,13 @@ Meteor.methods({
 
     if(docId) {
       var modifier =doc;
-      OrganizationsCollection.update({_id:docId}, modifier);
+      OrganizationsCollection.update({_id:docId}, modifier, function(error, result) {
+        if(Meteor.isClient) {
+          if(!error && result) {
+            Router.go('/orgs');
+          }
+        }
+      });
     }
     else {
       OrganizationSchema.clean(doc);
@@ -11,7 +17,7 @@ Meteor.methods({
       OrganizationsCollection.insert(doc, function(error, result) {
         if(Meteor.isClient) {
           if(!error && result) {
-            // console.log('success');
+            Router.go('/orgs');
           }
         }
       });
