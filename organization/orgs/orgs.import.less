@@ -4,9 +4,18 @@
   margin-bottom: 10px;
 }
 
-.orgs-results {
-}
 .orgs-org {
   background-color: @white;
   border-bottom: solid 1px @grayLight;
+}
+
+@media (min-width: 700px) {
+  .orgs-results {
+    text-align: center;
+  }
+  .orgs-org {
+    display: inline-block;
+    margin: 10px;
+    width: 300px;
+  }
 }
