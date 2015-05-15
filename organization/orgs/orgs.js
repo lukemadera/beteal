@@ -1,6 +1,12 @@
 OrgsFiltersSchema = new SimpleSchema({
   name: {
     type: String
+  },
+  location: {
+    type: AddressSchema
+  },
+  locationRadius: {
+    type: Number
   }
 });
 
@@ -74,6 +80,25 @@ if(Meteor.isClient) {
       }
       else {
         orgsObj.unsetFilter('name', {}); 
+      }
+    }
+  });
+
+  Template.orgsFilterLocation.events({
+    'click .orgs-filter-location-btn': function(evt, template) {
+      // var valLoc =template.find('.orgs-filter-location-input').
+      var valLoc =AutoForm.getFieldValue('location');
+      var valRadius =AutoForm.getFieldValue('locationRadius');
+      console.log(valLoc, valRadius);
+      if(valLoc && valRadius) {
+        var val ={
+          location: valLoc,
+          radius: valRadius
+        };
+        orgsObj.setFilter('location', val, {});
+      }
+      else {
+        orgsObj.unsetFilter('location', {}); 
       }
     }
   });

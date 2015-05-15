@@ -15,6 +15,11 @@ http://stackoverflow.com/questions/28727155/algorithm-mysql-get-all-points-withi
   @param {Number} radius Distance from lat, lng in kilometers
   @param {Number} lat Latitude in degrees
   @param {Number} lng Longitude in degrees
+  @return {Object}
+    @param {Number} latMin
+    @param {Number} latMax
+    @param {Number} lngMin
+    @param {Number} lngMax
   */
   orgsObj.computeBoundingLatLng =function(radius, lat, lng, params) {
     var ret ={};

@@ -39,6 +39,17 @@ if(Meteor.isClient) {
             $options: 'i'
           }
         }
+        else if(filters[ii].key ==='location') {
+          var latLngBounds =orgsObj.computeBoundingLatLng(filters[ii].val.radius, filters[ii].val.location.lat, filters[ii].val.location.lng, {});
+          query['locations.lat'] ={
+            '$gte': latLngBounds.latMin,
+            '$lte': latLngBounds.latMax
+          };
+          query['locations.lng'] ={
+            '$gte': latLngBounds.lngMin,
+            '$lte': latLngBounds.lngMax
+          };
+        }
       }
     }
     return query;
@@ -57,6 +68,14 @@ if(Meteor.isClient) {
         template: 'orgsFilterName',
         key: 'name',
         val: ''
+      },
+      {
+        template: 'orgsFilterLocation',
+        key: 'location',
+        val: {
+          location: {},
+          radius: 0
+        }
       }
     ];
     var ii;

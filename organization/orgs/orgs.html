@@ -39,3 +39,15 @@
 <template name="orgsFilterName">
   {{> afQuickField name="name" class="orgs-filter-name-input"}}
 </template>
+
+<template name="orgsFilterLocation">
+  <div class='flexbox'>
+    <div class='flex1'>
+      {{> afQuickField type="googleplace" name="location" class="orgs-filter-location-input"}}
+    </div>
+    <div>
+      {{> afQuickField name="locationRadius" class="orgs-filter-location-radius-input"}}
+    </div>
+    <div class='btn-link orgs-filter-location-btn'>Update</div>
+  </div>
+</template>
