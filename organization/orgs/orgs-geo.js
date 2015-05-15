@@ -1,6 +1,9 @@
 orgsObj ={};
 
 /**
+@todo - switch to MongoDB geo built in queries / indices??
+http://docs.mongodb.org/manual/applications/geospatial-indexes/
+
 http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates
 http://stackoverflow.com/questions/1689096/calculating-bounding-box-a-certain-distance-away-from-a-lat-long-coordinate-in-j
 

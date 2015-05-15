@@ -1,16 +1,19 @@
 <template name="orgs">
   <div class='orgs-filters'>
-    {{#autoForm schema="OrgsFiltersSchema" id=ids.form }}
-      <div class='orgs-filters-show-inactive list-header padding pointer'>More filters</div>
+    {{#autoForm schema="OrgsFiltersSchema" id=ids.form resetOnSuccess=false }}
       {{#each filters}}
-        {{#if visible}}
-          <div class='list padding'>
-            {{> Template.dynamic template=template}}
-          </div>
-        {{/if}}
+        <div class='list padding {{classes.visibility}}'>
+          {{> Template.dynamic template=template}}
+        </div>
       {{/each}}
-      <div class='margin-t center'>
-        <div class='btn btn-primary orgs-filters-search'>Search</div>
+      {{#unless showFiltersInactive.visible}}
+        <div class='padding'>
+          <span class='orgs-filters-show-inactive btn-link'>{{showFiltersInactive.html}}</span>
+        </div>
+      {{/unless}}
+      <div class='margin-t padding-lr'>
+        <button type="submit" class='btn btn-primary'>Search</button>
+        <div class='orgs-filters-clear-all btn margin-l'>Clear</div>
       </div>
     {{/autoForm}}
   </div>
@@ -42,12 +45,11 @@
 
 <template name="orgsFilterLocation">
   <div class='flexbox'>
+    <div class='padding-r'>
+      {{> afQuickField name="locationRadius" label="Within" placeholder="Radius (in km)" class="orgs-filter-location-radius-input"}}
+    </div>
     <div class='flex1'>
-      {{> afQuickField type="googleplace" name="location" class="orgs-filter-location-input"}}
+      {{> afQuickField type="googleplace" name="location" label="kilometers of location: " placeholder="Enter address / location" class="orgs-filter-location-input"}}
     </div>
-    <div>
-      {{> afQuickField name="locationRadius" class="orgs-filter-location-radius-input"}}
-    </div>
-    <div class='btn-link orgs-filter-location-btn'>Update</div>
   </div>
 </template>

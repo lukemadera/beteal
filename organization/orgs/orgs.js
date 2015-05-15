@@ -1,12 +1,15 @@
 OrgsFiltersSchema = new SimpleSchema({
   name: {
-    type: String
+    type: String,
+    optional: true
   },
   location: {
-    type: AddressSchema
+    type: AddressSchema,
+    optional: true
   },
   locationRadius: {
-    type: Number
+    type: Number,
+    optional: true
   }
 });
 
@@ -20,9 +23,12 @@ if(Meteor.isClient) {
   
   Template.orgs.created =function() {
     var id1 ="orgs"+(Math.random() + 1).toString(36).substring(7);
-    this.ids = new ReactiveVar({
+    var ids ={
       form: id1+"Form"
-    });
+    };
+    this.ids = new ReactiveVar(ids);
+
+    orgsObj.initForm(ids.form, {});
 
     /**
     @param {Array} filters Filters to search by; Each is an object of:
@@ -30,11 +36,16 @@ if(Meteor.isClient) {
       @param {String} key The key of this filter (e.g. 'name')
       @param {String} val The filter value (e.g. 'org name 1')
       @param {Boolean} active True if this filter is currently set / being used
-      @param {Boolean} visible True to show (active filters will always be visible but this will allow showing / hiding inactie filters)
+      @param {Object} classes
+        @param {String} visibility One of 'hidden', 'visible'
     */
     var filters =orgsObj.initFilters({});
     this.filters =new ReactiveVar(filters);
-    this.showFiltersInactive =new ReactiveVar(false);
+
+    //important to do this AFTER filters are init'ed
+    this.showFiltersInactive =new ReactiveVar({});
+    //init
+    orgsObj.toggleShowInactiveFilters({action:'show'});
 
     orgs =orgsObj.getOrgs({}, {});
     this.orgs =new ReactiveVar(orgs);
@@ -67,39 +78,9 @@ if(Meteor.isClient) {
     'click .orgs-filters-show-inactive': function(evt, template) {
       orgsObj.toggleShowInactiveFilters({});
     },
-    'click .orgs-filters-search': function(evt, template) {
-      orgsObj.search({});
-    }
-  });
-
-  Template.orgsFilterName.events({
-    'blur .orgs-filter-name-input': function(evt, template) {
-      var val =evt.target.value;
-      if(val) {
-        orgsObj.setFilter('name', evt.target.value, {});
-      }
-      else {
-        orgsObj.unsetFilter('name', {}); 
-      }
-    }
-  });
-
-  Template.orgsFilterLocation.events({
-    'click .orgs-filter-location-btn': function(evt, template) {
-      // var valLoc =template.find('.orgs-filter-location-input').
-      var valLoc =AutoForm.getFieldValue('location');
-      var valRadius =AutoForm.getFieldValue('locationRadius');
-      console.log(valLoc, valRadius);
-      if(valLoc && valRadius) {
-        var val ={
-          location: valLoc,
-          radius: valRadius
-        };
-        orgsObj.setFilter('location', val, {});
-      }
-      else {
-        orgsObj.unsetFilter('location', {}); 
-      }
+    'click .orgs-filters-clear-all': function(evt, template) {
+      orgsObj.unsetAllFilters({});
+      orgsObj.toggleShowInactiveFilters({action:'show'});
     }
   });
 }
