@@ -1,6 +1,6 @@
 if(this.process.env !==undefined && this.process.env.ENV !==undefined && this.process.env.ENV ==='prod') {
   App.info({
-    name: 'todoseed',
+    name: 'beteal',
     // description: 'A recipe sharing app made in Meteor.',
     // author: 'Percolate Studio Team',
     // email: 'us@percolatestudio.com',
@@ -10,7 +10,7 @@ if(this.process.env !==undefined && this.process.env.ENV !==undefined && this.pr
 }
 else {
   App.info({
-    name: 'todoseeddev',
+    name: 'betealdev',
     version: '0.0.1'
   });
 }
@@ -73,8 +73,8 @@ App.setPreference('StatusBarBackgroundColor', '#8E9599');
 //meteor local is supposed to be auto included but was not?
 App.accessRule('http://meteor.local/*');
 //environment specific (dev, prod) domains
-App.accessRule('http://todoseeddev.meteor.com/*');
-App.accessRule('http://todoseed.meteor.com/*');
+App.accessRule('http://betealdev.meteor.com/*');
+App.accessRule('http://beteal.org/*');
 //google maps, places
 // App.accessRule('https://maps.googleapis.com/*');
 // App.accessRule('https://maps.gstatic.com/*');

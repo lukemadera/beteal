@@ -1,0 +1,8 @@
+- github
+- digital ocean
+- goDaddy
+- mandrill
+- mongolab
+  - db user: beteal1-user-1 / yMW5VoxANupz0RT
+  - users / logins
+    - lukebeteal / lukem123+beteal@gmail.com

@@ -3,7 +3,7 @@ Config.email =function(params) {
   var emailDomain ='betealdev.meteor.com';
   if(Config.ENV ==='prod') {
     appName ='BeTeal';
-    emailDomain ='beteal.meteor.com';
+    emailDomain ='beteal.org';
   }
   var ret ={
     "addresses": {
@@ -17,9 +17,14 @@ Config.email =function(params) {
       }
     },
     "mandrill": {
-      "apiKey": "todoseed",
-      "username": "todoseed"
+      "apiKey": "8DYqpq74xKAb2jYdCoCQ2A",
+      "username": "lukem123+betealdev@gmail.com"
     }
   };
+  if(Config.ENV ==='prod') {
+    ret.mandrill.apiKey ="lIAlj60lxJz6IPP2rQvvLQ";
+    ret.mandrill.username ="lukem123+beteal@gmail.com";
+    ret.domainHost ='http://'+emailDomain;
+  }
   return ret;
 };
