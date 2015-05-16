@@ -29,7 +29,9 @@ if(Meteor.isClient) {
           orgsObj.unsetFilter('name', {}); 
         }
 
+        var locSet =false;
         if(insertDoc.location && insertDoc.locationRadius) {
+          locSet =true;
           var val ={
             location: insertDoc.location,
             radius: insertDoc.locationRadius
@@ -43,6 +45,17 @@ if(Meteor.isClient) {
         orgsObj.search({});
         //hide inactive filters
         orgsObj.toggleShowInactiveFilters({action:'hide'});
+
+        //hack to re-select location otherwise it is blank next time around.. autoform and/or googleplace bug??   //@todo - fix this properly and remove hack
+        if(locSet) {
+          var templateInst =orgsObj.getMainTemplate({});
+          ele =templateInst.find('.orgs-filter-location-input');
+          // ele.click();   //not working
+          // ele.focus();   //not necessary apparently, which is good
+          var eleDropdown =$(ele).next();
+          var eleVal =eleDropdown.find('div:nth-child(1)');
+          eleVal.click();
+        }
 
         self.done();
 
