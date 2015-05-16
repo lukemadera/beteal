@@ -1,7 +1,7 @@
 {
   "name": "beteal",
   "scripts": {
-    "prod": "ENV=prod meteor build 1build --architecture os.linux.x86_64 --server beteal.org && scp -i /c/Users/LukeM/.ssh/id_rsa_digital_ocean 1build/beteal.tar.gz lmadera@beteal.org:/tmp/beteal.tar.gz && cat linux-prod-deploy.sh | ssh -i /c/Users/LukeM/.ssh/id_rsa_digital_ocean lmadera@beteal.org"
-    "prodWin": "SET ENV=prod && meteor build 1build --architecture os.linux.x86_64 --server beteal.org && scp -i \\c\\Users\\LukeM\\.ssh\\id_rsa_digital_ocean 1build\\beteal.tar.gz lmadera@beteal.org:/tmp/beteal.tar.gz && cat linux-prod-deploy.sh | ssh -i \\c\\Users\\LukeM\\.ssh\\id_rsa_digital_ocean lmadera@beteal.org && SET ENV="
+    "prod": "ENV=prod meteor build 1build --architecture os.linux.x86_64 --server beteal.org && scp 1build/beteal.tar.gz lmadera@beteal.org:/tmp/beteal.tar.gz && cat linux-prod-deploy.sh | ssh lmadera@beteal.org",
+    "prodWin": "SET ENV=prod && meteor build 1build --architecture os.linux.x86_64 --server beteal.org && scp 1build\\beteal.tar.gz lmadera@beteal.org:/tmp/beteal.tar.gz && cat linux-prod-deploy.sh | ssh lmadera@beteal.org && SET ENV="
   }
 }
