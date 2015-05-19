@@ -44,12 +44,15 @@
 </template>
 
 <template name="orgsFilterLocation">
-  <div class='flexbox'>
-    <div class='padding-r'>
+  <div class='orgs-filter-location-group'>
+    <div class='orgs-filter-location-radius'>
       {{> afQuickField name="locationRadius" label="Within" placeholder="Radius (in km)" class="orgs-filter-location-radius-input"}}
     </div>
-    <div class='flex1'>
+    <div class='orgs-filter-location-location'>
       {{> afQuickField type="googleplace" name="location" label="kilometers of location: " placeholder="Enter address / location" class="orgs-filter-location-input"}}
     </div>
+  </div>
+  <div class='orgs-filter-location-remote'>
+    {{> afQuickField type="select" defaultValue=optsLocationRemote.defaultVal name="locationRemote" label="Show remote locations?" options=optsLocationRemote.opts class="orgs-filter-location-remote-input"}}
   </div>
 </template>

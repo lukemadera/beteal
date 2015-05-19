@@ -10,6 +10,10 @@ OrgsFiltersSchema = new SimpleSchema({
   locationRadius: {
     type: Number,
     optional: true
+  },
+  locationRemote: {
+    type: String,
+    optional: true
   }
 });
 
@@ -81,6 +85,29 @@ if(Meteor.isClient) {
     'click .orgs-filters-clear-all': function(evt, template) {
       orgsObj.unsetAllFilters({});
       orgsObj.toggleShowInactiveFilters({action:'show'});
+    }
+  });
+
+  Template.orgsFilterLocation.helpers({
+    optsLocationRemote: function() {
+      var ret ={
+        opts: [
+          {
+            value: 'show',
+            label: 'Yes'
+          },
+          {
+            value: 'hide',
+            label: 'No'
+          },
+          {
+            value: 'remoteOnly',
+            label: 'Show remote ONLY'
+          }
+        ],
+        defaultVal: 'show'
+      }
+      return ret;
     }
   });
 }

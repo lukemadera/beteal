@@ -30,12 +30,15 @@ if(Meteor.isClient) {
         }
 
         var locSet =false;
-        if(insertDoc.location && insertDoc.locationRadius) {
+        if(insertDoc.location && insertDoc.locationRadius || insertDoc.locationRemote) {
           locSet =true;
           var val ={
-            location: insertDoc.location,
-            radius: insertDoc.locationRadius
+            remote: insertDoc.locationRemote
           };
+          if(insertDoc.location && insertDoc.locationRadius) {
+            val.location =insertDoc.location;
+            val.radius =insertDoc.locationRadius;
+          }
           orgsObj.setFilter('location', val, {});
         }
         else {
@@ -69,9 +72,10 @@ if(Meteor.isClient) {
     var orgs =OrganizationsCollection.find(query).fetch();
     var ii;
     for(ii =0; ii<orgs.length; ii++) {
-      orgs[ii].xDisplay ={
-        location: orgs[ii].locations[0]
-      };
+      orgs[ii].xDisplay ={};
+      if(orgs[ii].locations !==undefined && orgs[ii].locations.length) {
+        orgs[ii].xDisplay.location =orgs[ii].locations[0];
+      }
     }
     console.log('query: ', query, 'orgs length: ', orgs.length);
     return orgs;
@@ -91,15 +95,63 @@ if(Meteor.isClient) {
           }
         }
         else if(filters[ii].key ==='location') {
-          var latLngBounds =orgsObj.computeBoundingLatLng(filters[ii].val.radius, filters[ii].val.location.lat, filters[ii].val.location.lng, {});
-          query['locations.lat'] ={
-            '$gte': latLngBounds.latMin,
-            '$lte': latLngBounds.latMax
-          };
-          query['locations.lng'] ={
-            '$gte': latLngBounds.lngMin,
-            '$lte': latLngBounds.lngMax
-          };
+          console.log(filters[ii].val);   //TESTING
+          var locRemote =filters[ii].val.remote;
+          if(locRemote ==='remoteOnly') {
+            query.locations ={
+              '$exists': false
+            };
+          }
+          else {
+            var queryLat =false, queryLng =false;
+            if(filters[ii].val.radius && filters[ii].val.location) {
+              var latLngBounds =orgsObj.computeBoundingLatLng(filters[ii].val.radius, filters[ii].val.location.lat, filters[ii].val.location.lng, {});
+              queryLat ={
+                '$gte': latLngBounds.latMin,
+                '$lte': latLngBounds.latMax
+              };
+              queryLng ={
+                '$gte': latLngBounds.lngMin,
+                '$lte': latLngBounds.lngMax
+              };
+            }
+
+            //hide remote
+            if(locRemote ==='hide') {
+              if(queryLat && queryLng) {
+                query['locations.lat'] =queryLat;
+                query['locations.lng'] =queryLng;
+              }
+              else {
+                query.locations ={
+                  '$exists': true
+                };
+              }
+            }
+            //show remote
+            else {
+
+              if(queryLat && queryLng) {
+                if(query['$or'] ===undefined) {
+                  query['$or'] =[];
+                }
+                query['$or'].push(
+                  {
+                    'locations.lat': queryLat,
+                    'locations.lng': queryLng
+                  }
+                );
+                query['$or'].push(
+                  {
+                    'locations': {
+                      '$exists': false
+                    }
+                  }
+                );
+              }
+
+            }
+          }
         }
       }
     }
@@ -169,7 +221,8 @@ if(Meteor.isClient) {
         key: 'location',
         val: {
           location: {},
-          radius: 0
+          radius: 0,
+          remote: ''
         }
       }
     ];
@@ -218,7 +271,7 @@ if(Meteor.isClient) {
     templateInst.filters.set(filters);
 
     //clear html fields / inputs
-    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input'];    //hardcoded must match html classes
+    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input'];    //hardcoded must match html classes
     var ele;
     for(ii =0; ii<selectors.length; ii++) {
       ele =templateInst.find(selectors[ii]);
