@@ -72,9 +72,12 @@ if(Meteor.isClient) {
     var orgs =OrganizationsCollection.find(query).fetch();
     var ii;
     for(ii =0; ii<orgs.length; ii++) {
-      orgs[ii].xDisplay ={};
+      orgs[ii].xDisplay ={
+        locationFormatted: ''
+      };
       if(orgs[ii].locations !==undefined && orgs[ii].locations.length) {
         orgs[ii].xDisplay.location =orgs[ii].locations[0];
+        orgs[ii].xDisplay.locationFormatted =orgs[ii].xDisplay.location.city+", "+orgs[ii].xDisplay.location.state+", "+orgs[ii].xDisplay.location.country;
       }
     }
     console.log('query: ', query, 'orgs length: ', orgs.length);
