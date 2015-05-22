@@ -67,6 +67,25 @@ if(Meteor.isClient) {
     }, true);
   };
 
+  orgsObj.formatLocations =function(locations, params) {
+    var locFormatted ="";
+    if(locations !==undefined && locations.length) {
+      var ii;
+      for(ii =0; ii<locations.length; ii++) {
+        if(ii >0) {
+          locFormatted +=" | ";
+        }
+        if(locations[ii].state !==undefined) {
+          locFormatted +=locations[ii].city+", "+locations[ii].state+", "+locations[ii].country;
+        }
+        else {
+          locFormatted +=locations[ii].city+", "+locations[ii].country;
+        }
+      }
+    }
+    return locFormatted;
+  };
+
   orgsObj.getOrgs =function(query, params) {
     var templateInst =this.getMainTemplate({});
     var orgs =OrganizationsCollection.find(query).fetch();
@@ -75,15 +94,7 @@ if(Meteor.isClient) {
       orgs[ii].xDisplay ={
         locationFormatted: ''
       };
-      if(orgs[ii].locations !==undefined && orgs[ii].locations.length) {
-        orgs[ii].xDisplay.location =orgs[ii].locations[0];
-        if(orgs[ii].xDisplay.location.state !==undefined) {
-          orgs[ii].xDisplay.locationFormatted =orgs[ii].xDisplay.location.city+", "+orgs[ii].xDisplay.location.state+", "+orgs[ii].xDisplay.location.country;
-        }
-        else {
-          orgs[ii].xDisplay.locationFormatted =orgs[ii].xDisplay.location.city+", "+orgs[ii].xDisplay.location.country;
-        }
-      }
+      orgs[ii].xDisplay.locationFormatted =orgsObj.formatLocations(orgs[ii].locations, {});
     }
     console.log('query: ', query, 'orgs length: ', orgs.length);
     return orgs;
