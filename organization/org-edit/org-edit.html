@@ -4,11 +4,55 @@
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
       {{> afQuickField name="name"}}
       {{> afQuickField name="purpose"}}
-      {{> afQuickField type="googleplace" name="locations.0" label="Location"}}
+      <!-- {{ >afQuickField name="locations"}} -->
+      <!-- {{> afQuickField type="googleplace" name="locations.0" label="Location"}} -->
+      <!-- {{> afQuickField type="googleplace" name=locations.one label="Location"}}
+      {{> afQuickField type="googleplace" name=locations.two label="Location"}} -->
+
+      <!-- {{#each organization.xDisplay.locations}}
+        {{> afQuickField type="googleplace" name=name label="Location" class='org-edit-location-input'}}
+        <span class='btn btn-small btn-danger org-edit-location-remove'>Remove</span>
+      {{/each}}
+      <div>
+        <span class='btn btn-small org-edit-location-add'>Add</span>
+      </div> -->
+
+      <!-- {{# afEachArrayItem locations}}
+        {{> afQuickField type="googleplace" name= label="Location" class='org-edit-location-input'}}
+      {{/afEachArrayItem}} -->
+
+      {{> afArrayField name="locations"}}
+
       <div class='margin-t center'>
         <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>
       </div>
     {{/autoForm}}
   </div>
   
+</template>
+
+
+<template name="afArrayField_googleplace">
+  {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+  <div class="autoform-array-item">
+    <div>
+      <div class="autoform-array-item-body">
+        <!-- {{> afQuickField name=this.name label=false options=afOptionsFromSchema}} -->
+        <label>
+          {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+            <span class='btn btn-small btn-danger autoform-remove-item'>X</span>&nbsp;
+          {{/if}}
+          <span>Location</span>
+        </label>
+        {{> afQuickField type="googleplace" name=this.name label=false class='org-edit-location-input'}}
+      </div>
+    </div>
+  </div>
+  {{/afEachArrayItem}}
+  {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+  <div>
+    <br />
+    <span class='btn btn-small autoform-add-item' data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}">Add Location</span>
+  </div>
+  {{/if}}
 </template>
