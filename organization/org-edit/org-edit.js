@@ -3,24 +3,26 @@ var orgEdit ={};
 Meteor.methods({
   saveOrganization: function(doc, docId) {
 
-    function removeEmptyLocations(doc, params) {
-      console.log(doc);
-      if(doc.locations !==undefined && doc.locations.length) {
-        var ii;
-        for(ii =(doc.locations.length-1); ii>=0; ii--) {
-          if(doc.locations[ii] ===undefined || !doc.locations[ii]) {
-            doc.locations =nrArray.remove(doc.locations, ii);
+    function removeEmptyArrayItems(doc, params) {
+      var keys =['locations', 'links'];
+      var kk, ii, key;
+      for(kk =0; kk<keys.length; kk++) {
+        key =keys[kk];
+        if(doc[key] !==undefined && doc[key].length) {
+          for(ii =(doc[key].length-1); ii>=0; ii--) {
+            if(doc[key][ii] ===undefined || !doc[key][ii]) {
+              doc[key] =nrArray.remove(doc[key], ii);
+            }
           }
         }
       }
       console.log(doc);
-
       return doc;
     }
 
     if(docId) {
       var modifier =doc;
-      doc.$set =removeEmptyLocations(doc.$set);
+      doc.$set =removeEmptyArrayItems(doc.$set);
       OrganizationsCollection.update({_id:docId}, modifier, function(error, result) {
         if(Meteor.isClient) {
           if(!error && result) {
@@ -30,7 +32,7 @@ Meteor.methods({
       });
     }
     else {
-      doc =removeEmptyLocations(doc);
+      doc =removeEmptyArrayItems(doc);
       OrganizationSchema.clean(doc);
 
       OrganizationsCollection.insert(doc, function(error, result) {
@@ -86,7 +88,7 @@ if(Meteor.isClient) {
   Template.orgEdit.rendered =function() {
     orgEdit.getOrg(this, {});
 
-    AutoForm.setDefaultTemplateForType('afArrayField', 'googleplace');
+    AutoForm.setDefaultTemplateForType('afArrayField', 'type');
   };
 
   Template.orgEdit.helpers({

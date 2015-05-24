@@ -1,0 +1,25 @@
+<!-- https://github.com/aldeed/meteor-autoform/blob/master/templates/bootstrap3/components/afArrayField/afArrayField.html -->
+<template name="afArrayField_type">
+  {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+  <div class="autoform-array-item">
+    <div>
+      <div class="autoform-array-item-body afarrayfield-type-item">
+        {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+          <div class='afarrayfield-type-remove-item autoform-remove-item'><i class='fa fa-close'></i></div>
+        {{/if}}
+        {{#if typeIs "googleplace"}}
+          {{> afQuickField type="googleplace" name=this.name label=../atts.label}}
+        {{else}}
+          {{> afQuickField name=this.name label=false options=afOptionsFromSchema}}
+        {{/if}}
+
+      </div>
+    </div>
+  </div>
+  {{/afEachArrayItem}}
+  {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+  <div class='afarrayfield-type-add-item'>
+    <span class='btn btn-small autoform-add-item' data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}">Add {{this.atts.label}}</span>
+  </div>
+  {{/if}}
+</template>

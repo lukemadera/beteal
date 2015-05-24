@@ -92,9 +92,13 @@ if(Meteor.isClient) {
     var ii;
     for(ii =0; ii<orgs.length; ii++) {
       orgs[ii].xDisplay ={
-        locationFormatted: ''
+        locationFormatted: '',
+        links: ''
       };
       orgs[ii].xDisplay.locationFormatted =orgsObj.formatLocations(orgs[ii].locations, {});
+      if(orgs[ii].links !==undefined && orgs[ii].links.length) {
+        orgs[ii].xDisplay.links =orgs[ii].links[0].url;
+      }
     }
     console.log('query: ', query, 'orgs length: ', orgs.length);
     return orgs;
@@ -108,10 +112,19 @@ if(Meteor.isClient) {
     for(ii =0; ii<filters.length; ii++) {
       if(filters[ii].active) {
         if(filters[ii].key ==='name') {
-          query.name ={
+          if(query['$or'] ===undefined) {
+            query['$or'] =[];
+          }
+          var regex ={
             $regex: filters[ii].val,
             $options: 'i'
-          }
+          };
+          query['$or'].push({
+            name: regex
+          });
+          query['$or'].push({
+            'links.url': regex
+          });
         }
         else if(filters[ii].key ==='location') {
           console.log(filters[ii].val);   //TESTING

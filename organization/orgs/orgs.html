@@ -23,6 +23,7 @@
       <div class='orgs-org padding'>
         <a href='/org-edit?organizationId={{_id}}' class='a-div'>
           <div class='h3'>{{name}}</div>
+          <div>{{xDisplay.links}}</div>
           <div>{{xDisplay.locationFormatted}}</div>
           <div>{{purpose}}</div>
         </a>
@@ -40,7 +41,7 @@
 </template>
 
 <template name="orgsFilterName">
-  {{> afQuickField name="name" class="orgs-filter-name-input"}}
+  {{> afQuickField name="name" label="Name / Link" class="orgs-filter-name-input"}}
 </template>
 
 <template name="orgsFilterLocation">

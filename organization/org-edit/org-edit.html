@@ -4,37 +4,12 @@
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
       {{> afQuickField name="name"}}
       {{> afQuickField name="purpose"}}
-      {{> afArrayField name="locations"}}
+      {{> afArrayField name="locations" type="googleplace" label="Location"}}
+      {{> afArrayField name="links" label="Link"}}
       <div class='margin-t center'>
         <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>
       </div>
     {{/autoForm}}
   </div>
   
-</template>
-
-
-<!-- https://github.com/aldeed/meteor-autoform/blob/master/templates/bootstrap3/components/afArrayField/afArrayField.html -->
-<template name="afArrayField_googleplace">
-  {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
-  <div class="autoform-array-item">
-    <div>
-      <div class="autoform-array-item-body">
-        <label>
-          {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
-            <span class='btn btn-small btn-danger autoform-remove-item'>X</span>&nbsp;
-          {{/if}}
-          <span>Location</span>
-        </label>
-        {{> afQuickField type="googleplace" name=this.name label=false class='org-edit-location-input'}}
-      </div>
-    </div>
-  </div>
-  {{/afEachArrayItem}}
-  {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
-  <div>
-    <br />
-    <span class='btn btn-small autoform-add-item' data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}">Add Location</span>
-  </div>
-  {{/if}}
 </template>
