@@ -22,6 +22,8 @@ if(Meteor.isClient) {
         self.event.preventDefault();
         self.event.stopPropagation();
 
+        var val;
+
         if(insertDoc.name !==undefined) {
           orgsObj.setFilter('name', insertDoc.name, {});
         }
@@ -32,7 +34,7 @@ if(Meteor.isClient) {
         var locSet =false;
         if(insertDoc.location && insertDoc.locationRadius || insertDoc.locationRemote) {
           locSet =true;
-          var val ={
+          val ={
             remote: insertDoc.locationRemote
           };
           if(insertDoc.location && insertDoc.locationRadius) {
@@ -43,6 +45,36 @@ if(Meteor.isClient) {
         }
         else {
           orgsObj.unsetFilter('location', {}); 
+        }
+
+        if(insertDoc.sizeMin !==undefined || insertDoc.sizeMax !==undefined) {
+          var val ={
+          };
+          if(insertDoc.sizeMin !==undefined) {
+            val.min =insertDoc.sizeMin;
+          }
+          if(insertDoc.sizeMax !==undefined) {
+            val.max =insertDoc.sizeMax;
+          }
+          orgsObj.setFilter('size', val, {});
+        }
+        else {
+          orgsObj.unsetFilter('size', {}); 
+        }
+
+        if(insertDoc.visitsMin !==undefined || insertDoc.visitsMax !==undefined) {
+          var val ={
+          };
+          if(insertDoc.visitsMin !==undefined) {
+            val.min =insertDoc.visitsMin;
+          }
+          if(insertDoc.visitsMax !==undefined) {
+            val.max =insertDoc.visitsMax;
+          }
+          orgsObj.setFilter('visits', val, {});
+        }
+        else {
+          orgsObj.unsetFilter('visits', {}); 
         }
 
         orgsObj.search({});
@@ -127,7 +159,6 @@ if(Meteor.isClient) {
           });
         }
         else if(filters[ii].key ==='location') {
-          console.log(filters[ii].val);   //TESTING
           var locRemote =filters[ii].val.remote;
           if(locRemote ==='remoteOnly') {
             query.locations ={
@@ -183,6 +214,24 @@ if(Meteor.isClient) {
               }
 
             }
+          }
+        }
+        else if(filters[ii].key ==='size') {
+          query.size ={};
+          if(filters[ii].val.min !==undefined) {
+            query.size['$gte'] =filters[ii].val.min;
+          }
+          if(filters[ii].val.max !==undefined) {
+            query.size['$lte'] =filters[ii].val.max;
+          }
+        }
+        else if(filters[ii].key ==='visits') {
+          query.visits ={};
+          if(filters[ii].val.min !==undefined) {
+            query.visits['$gte'] =filters[ii].val.min;
+          }
+          if(filters[ii].val.max !==undefined) {
+            query.visits['$lte'] =filters[ii].val.max;
           }
         }
       }
@@ -256,7 +305,23 @@ if(Meteor.isClient) {
           radius: 0,
           remote: ''
         }
-      }
+      },
+      {
+        template: 'orgsFilterSize',
+        key: 'size',
+        val: {
+          min: '',
+          max: ''
+        }
+      },
+      {
+        template: 'orgsFilterVisits',
+        key: 'visits',
+        val: {
+          min: '',
+          max: ''
+        }
+      },
     ];
 
     //other properties will be init'ed in toggleShowInactiveFilters init call
@@ -303,7 +368,7 @@ if(Meteor.isClient) {
     templateInst.filters.set(filters);
 
     //clear html fields / inputs
-    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input'];    //hardcoded must match html classes
+    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input', '.orgs-filter-size-min-input', '.orgs-filter-size-max-input', '.orgs-filter-visits-min-input', '.orgs-filter-visits-max-input'];    //hardcoded must match html classes
     var ele;
     for(ii =0; ii<selectors.length; ii++) {
       ele =templateInst.find(selectors[ii]);

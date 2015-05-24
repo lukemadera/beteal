@@ -57,3 +57,25 @@
     {{> afQuickField type="select" defaultValue=optsLocationRemote.defaultVal name="locationRemote" label="Show remote locations?" options=optsLocationRemote.opts class="orgs-filter-location-remote-input"}}
   </div>
 </template>
+
+<template name="orgsFilterSize">
+  <div class='flexbox'>
+    <div class='flex1'>
+      {{> afQuickField name="sizeMin" label="Min # people" class="orgs-filter-size-min-input"}}
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="sizeMax" label="Max # people" class="orgs-filter-size-max-input"}}
+    </div>
+  </div>
+</template>
+
+<template name="orgsFilterVisits">
+  <div class='flexbox'>
+    <div class='flex1'>
+      {{> afQuickField name="visitsMin" label="Min # visits" class="orgs-filter-visits-min-input"}}
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="visitsMax" label="Max # visits" class="orgs-filter-visits-max-input"}}
+    </div>
+  </div>
+</template>

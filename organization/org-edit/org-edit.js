@@ -16,7 +16,6 @@ Meteor.methods({
           }
         }
       }
-      console.log(doc);
       return doc;
     }
 

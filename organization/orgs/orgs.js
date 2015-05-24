@@ -14,12 +14,28 @@ OrgsFiltersSchema = new SimpleSchema({
   locationRemote: {
     type: String,
     optional: true
+  },
+  sizeMin: {
+    type: Number,
+    optional: true
+  },
+  sizeMax: {
+    type: Number,
+    optional: true
+  },
+  visitsMin: {
+    type: Number,
+    optional: true
+  },
+  visitsMax: {
+    type: Number,
+    optional: true
   }
 });
 
 if(Meteor.isServer) {
   Meteor.publish('organizations', function() {
-    return OrganizationsCollection.find({}, {fields: {name:1, locations:1, links:1, purpose:1, tags:1} });
+    return OrganizationsCollection.find({}, {fields: {name:1, locations:1, links:1, purpose:1, tags:1, size:1, visits:1} });
   });
 }
 
