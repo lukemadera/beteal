@@ -43,8 +43,10 @@ So practically speaking we can probably leave out some of the 8 total sets of ta
   - values (have & seek)
   - mission (have & seek)
   - skills-seek (for co-founder matching, not really applicable for joining an organization)
-    - [role-specific differentiations]
+    - [role-specific differentiations in ADDITION to the generic organization wide version of this tag]
   - resources-seek
+
+NOTE: roles are TEMPORARY (used for hiring) so do NOT have vouches. Each tag should have a generic (organization wide / no role ids set) one as well where the vouches are stored.
 
 
 ### Role Attributes

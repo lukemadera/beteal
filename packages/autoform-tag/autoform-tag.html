@@ -1,0 +1,18 @@
+<template name='afTag'>
+  {{#autoForm schema="afTagSchema" id=ids.form doc=tag resetOnSuccess=false}}
+    <div class='flexbox'>
+      <div class='flex1 bt-autoform-tag-name-input-cont'>
+        {{> afQuickField name="name" class="bt-autoform-tag-name-input"}}
+        <div class='bt-autoform-tag-predictions {{classes.predictions}}'>
+          {{#each predictions}}
+            <div class='bt-autoform-tag-prediction-item'>{{name}}</div>
+          {{/each}}
+        </div>
+      </div>
+      <div class='margin-l'>
+        {{> afQuickField name="rating" class="bt-autoform-tag-rating-input"}}
+      </div>
+    </div>
+    {{> afQuickField name="comment" rows=4 placeholder="Explain the rating you gave above" class="bt-autoform-tag-comment-input"}}
+  {{/autoForm}}
+</template>

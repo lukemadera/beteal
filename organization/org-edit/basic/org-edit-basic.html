@@ -1,0 +1,19 @@
+<template name="orgEditBasic">
+  <div class='org-edit-form'>
+    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
+      {{> afQuickField name="name"}}
+      {{> afArrayField name="links" label="Link"}}
+      {{> afQuickField name="purpose"}}
+      {{> afQuickField name="description" rows=6}}
+      {{> afQuickField name="size" label="Size (# employees)"}}
+
+      <div class='margin-large-t'>Other organizations (or people) looking to "go Teal" would love to learn from your experience. Are you willing to host visitors?</div>
+      {{> afQuickField name="visits" label="Visits per year" placeholder="How many (if any) visits do you allow?"}}
+      {{> afQuickField name="visitDetails" rows=6 placeholder="Cost, duration, how to book, and any other details for potential visitors"}}
+
+      <div class='margin-t center'>
+        <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>
+      </div>
+    {{/autoForm}}
+  </div>
+</template>

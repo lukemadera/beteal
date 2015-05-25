@@ -1,4 +1,4 @@
-var orgEdit ={};
+orgEdit ={};
 
 Meteor.methods({
   saveOrganization: function(doc, docId) {
@@ -59,6 +59,52 @@ if(Meteor.isServer) {
 
 if(Meteor.isClient) {
 
+  orgEdit.created =function(templateInst, key, params) {
+    var id1 =key+(Math.random() + 1).toString(36).substring(7);
+    templateInst.ids = new ReactiveVar({
+      form: id1+"Form"
+    });
+    templateInst.org =new ReactiveVar({});
+
+    templateInst.subpages =new ReactiveVar([]);
+  };
+
+  orgEdit.init =function(templateInst, params) {
+    orgEdit.getOrg(templateInst, {});
+    orgEdit.formSubpages(templateInst, {});
+
+    AutoForm.setDefaultTemplateForType('afArrayField', 'type');
+  };
+
+  orgEdit.getAFMethod =function(templateInst, thisObj, params) {
+    // var org =templateInst.org.get();
+    var orgId =Router.current().params.query.organizationId;
+    if(orgId) {
+      return 'method-update';
+    }
+    else {
+      return 'method';
+    }
+  };
+
+  orgEdit.formSubpages =function(templateInst, params) {
+    var subpages =[
+      {
+        title: "Basic",
+        template: "orgEditBasic"
+      },
+      {
+        title: "Locations",
+        template: "orgEditLocations"
+      },
+      {
+        title: "Tags",
+        template: "orgEditTags"
+      }
+    ];
+    templateInst.subpages.set(subpages);
+  };
+
   orgEdit.getOrg =function(templateInst, params) {
     var org;
     var orgId =Router.current().params.query.organizationId;
@@ -77,17 +123,11 @@ if(Meteor.isClient) {
   };
 
   Template.orgEdit.created =function() {
-    var id1 ="orgEdit"+(Math.random() + 1).toString(36).substring(7);
-    this.ids = new ReactiveVar({
-      form: id1+"Form"
-    });
-    this.org =new ReactiveVar({});
+    orgEdit.created(this, 'orgEdit', {});
   };
 
   Template.orgEdit.rendered =function() {
-    orgEdit.getOrg(this, {});
-
-    AutoForm.setDefaultTemplateForType('afArrayField', 'type');
+    orgEdit.init(this, {});
   };
 
   Template.orgEdit.helpers({
@@ -95,15 +135,18 @@ if(Meteor.isClient) {
       return Template.instance().org.get();
     },
     afMethod: function() {
-      if(this.organizationId) {
-        return 'method-update';
-      }
-      else {
-        return 'method';
-      }
+      return orgEdit.getAFMethod(Template.instance(), this, {});
     },
     ids: function() {
       return Template.instance().ids.get();
+    },
+    subpages: function() {
+      return Template.instance().subpages.get();
+    },
+    optsSubpages: function() {
+      return {
+        contents: false
+      };
     }
   });
 }

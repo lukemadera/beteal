@@ -1,0 +1,23 @@
+.bt-autoform-tag-name-input-cont {
+  position: relative;
+}
+.bt-autoform-tag-predictions {
+  position: absolute;
+  z-index: 99999;
+  width: 100%;
+  background-color: white;
+  color: rgb(75,75,75);
+  border-bottom: solid 1px rgb(200,200,200);
+  border-left: solid 1px rgb(200,200,200);
+  border-right: solid 1px rgb(200,200,200);
+  padding: 0 5px;
+  display: none;
+  box-sizing: border-box;
+}
+.bt-autoform-tag-predictions.visible {
+  display: block;
+}
+
+.bt-autoform-tag-prediction-item {
+  cursor: pointer;
+}

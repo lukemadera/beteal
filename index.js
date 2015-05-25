@@ -23,6 +23,10 @@ Meteor.startup(function() {
         return false;
       }
     });
+
+    Meteor.publish('tags', function() {
+      return TagsCollection.find({});
+    });
     
   }
 });

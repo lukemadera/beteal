@@ -1,0 +1,39 @@
+<template name='btSubpages'>
+
+  <div class='flexbox bt-subpages-header'>
+    <div class='bt-subpages-header-arrow pointer bt-subpages-prev'>
+      {{#if hasPrevNextPage.prev}}
+      <i class='fa fa-arrow-left'></i>
+      {{else}}
+      &nbsp;
+      {{/if}}
+    </div>
+    <div class='flex1 center h3'><span class='pointer padding-lr bt-subpages-header-title'>{{curPage.title}}</span></div>
+    <div class='bt-subpages-header-arrow pointer bt-subpages-next'>
+      {{#if hasPrevNextPage.next}}
+      <i class='fa fa-arrow-right'></i>
+      {{else}}
+      &nbsp;
+      {{/if}}
+    </div>
+  </div>
+  <div class='bt-subpages-header-spacer'>&nbsp;</div>
+  
+  {{#if curPage}}
+  {{> Template.dynamic template=curPage.template data=curPage.atts}}
+  {{/if}}
+
+  <!-- <div class='flexbox'>
+    <div class='btn-link margin-lr bt-subpages-prev'>Previous</div>
+    <div class='flex1'>&nbsp;</div>
+    <div class='btn-link margin-lr bt-subpages-next'>Next</div>
+  </div> -->
+</template>
+
+<template name='btSubpagesContents'>
+  {{#each pages}}
+    <div class='bt-subpages-contents-page pointer margin-tb padding-lr'>
+      {{title}}
+    </div>
+  {{/each}}
+</template>
