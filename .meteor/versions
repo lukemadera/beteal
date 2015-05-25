@@ -44,7 +44,7 @@ lukemadera:autoform-googleplace@1.0.4
 lukemadera:config@0.0.1
 lukemadera:mocks@0.0.1
 lukemadera:notify@0.0.1
-lukemadera:subpages@1.0.0
+lukemadera:subpages@1.0.1
 meteor@1.1.6
 meteor-platform@1.2.2
 minifiers@1.1.5
