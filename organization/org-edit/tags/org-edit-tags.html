@@ -1,6 +1,6 @@
 <template name="orgEditTags">
   <div class='org-edit-form'>
-    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
+    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
       {{> afArrayField name="tags" type="tag" label="Tag"}}
 
       <div class='margin-t center'>

@@ -4,15 +4,12 @@ if(Meteor.isClient) {
   };
 
   Template.orgEditTags.rendered =function() {
-    orgEdit.init(this, {});
+    orgEdit.init(this, 'orgEditTags', {});
   };
 
   Template.orgEditTags.helpers({
     organization: function() {
       return Template.instance().org.get();
-    },
-    afMethod: function() {
-      return orgEdit.getAFMethod(Template.instance(), this, {});
     },
     ids: function() {
       return Template.instance().ids.get();

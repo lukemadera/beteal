@@ -1,6 +1,6 @@
 <template name="orgEditBasic">
   <div class='org-edit-form'>
-    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form type=afMethod meteormethod="saveOrganization"}}
+    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
       {{> afQuickField name="name"}}
       {{> afArrayField name="links" label="Link"}}
       {{> afQuickField name="purpose"}}

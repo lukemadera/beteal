@@ -1,5 +1,5 @@
 
-The main value of this site / tool is to connect (match) entities (people or organizations). Questions (a la OkCupid), personality tests, etc. can be used but we're starting with a self-selected / rated priority system of tags with "vouches" from the public to confirm / deny those ratings.
+The main value of this site / tool is to connect (match) entities (people or organizations). Questions (a la OkCupid), personality tests, etc. can be used but we're starting with a self-selected / rated priority system of tags with "vouches" / "reviews" from the public to confirm / deny those ratings.
 Each tag has both a quantitative (rating) and qualitative (comment) aspect. The quantitative is used for matching / algorithms and the comments are meant to back those ratings up. Entities can be searched based on self-scoring and/or public scoring.
 
 
@@ -46,7 +46,7 @@ So practically speaking we can probably leave out some of the 8 total sets of ta
     - [role-specific differentiations in ADDITION to the generic organization wide version of this tag]
   - resources-seek
 
-NOTE: roles are TEMPORARY (used for hiring) so do NOT have vouches. Each tag should have a generic (organization wide / no role ids set) one as well where the vouches are stored.
+NOTE: roles are TEMPORARY (used for hiring) so do NOT have reviews. Each tag should have a generic (organization wide / no role ids set) one as well where the reviews are stored.
 
 
 ### Role Attributes

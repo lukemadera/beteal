@@ -1,6 +1,7 @@
-var subpagesObj ={};
+lmSubpages ={};
+var lmSubpagesPrivate ={};
 
-subpagesObj.init =function(templateInst, params) {
+lmSubpagesPrivate.init =function(templateInst, params) {
   var self =this;
   //only do ONCE and do not do until pages is set!
   if(!templateInst.inited && templateInst.data.pages && templateInst.data.pages.length) {
@@ -27,7 +28,7 @@ subpagesObj.init =function(templateInst, params) {
       }
       pages.unshift({
         title: "Contents",
-        template: "btSubpagesContents",
+        template: "lmSubpagesContents",
         // pageIndex: 0,
         atts: {
           pages: contentsPages
@@ -56,18 +57,18 @@ subpagesObj.init =function(templateInst, params) {
   }
 };
 
-subpagesObj.getMainTemplate =function(params) {
+lmSubpagesPrivate.getMainTemplate =function(params) {
   var view =Blaze.currentView;
-  if(view.name !=="Template.btSubpages") {
+  if(view.name !=="Template.lmSubpages") {
     //get parent template instance if not on correct one - http://stackoverflow.com/questions/27949407/how-to-get-the-parent-template-instance-of-the-current-template
-    while (view && view.name !=="Template.btSubpages") {
+    while (view && view.name !=="Template.lmSubpages") {
       view = view.parentView;
     }
   }
   return view.templateInstance();
 };
 
-subpagesObj.nav =function(templateInst, direction, params) {
+lmSubpages.nav =function(templateInst, direction, params) {
   var curPageIndex =templateInst.curPage.get().pageIndex;
   var pages =templateInst.data.pages;
   var valid =false;
@@ -85,20 +86,20 @@ subpagesObj.nav =function(templateInst, direction, params) {
   }
 };
 
-subpagesObj.goToPage =function(templateInst, pageIndex, params) {
+lmSubpages.goToPage =function(templateInst, pageIndex, params) {
   templateInst.curPage.set(templateInst.data.pages[pageIndex]);
 };
 
-Template.btSubpages.created =function() {
+Template.lmSubpages.created =function() {
   this.curPage =new ReactiveVar(false);
   this.inited =false;
 };
 
-Template.btSubpages.rendered =function() {
-  subpagesObj.init(this, {});
+Template.lmSubpages.rendered =function() {
+  lmSubpagesPrivate.init(this, {});
 };
 
-Template.btSubpages.helpers({
+Template.lmSubpages.helpers({
   curPage: function() {
     return Template.instance().curPage.get();
   },
@@ -119,21 +120,21 @@ Template.btSubpages.helpers({
   }
 });
 
-Template.btSubpages.events({
-  'click .bt-subpages-prev': function(evt, template) {
-    subpagesObj.nav(template, 'prev', {});
+Template.lmSubpages.events({
+  'click .lm-subpages-prev': function(evt, template) {
+    lmSubpages.nav(template, 'prev', {});
   },
-  'click .bt-subpages-next': function(evt, template) {
-    subpagesObj.nav(template, 'next', {});
+  'click .lm-subpages-next': function(evt, template) {
+    lmSubpages.nav(template, 'next', {});
   },
-  'click .bt-subpages-header-title': function(evt, template) {
-    subpagesObj.goToPage(template, 0, {});
+  'click .lm-subpages-header-title': function(evt, template) {
+    lmSubpages.goToPage(template, 0, {});
   }
 });
 
-Template.btSubpagesContents.events({
-  'click .bt-subpages-contents-page': function(evt, template) {
-    var templateInst =subpagesObj.getMainTemplate();
-    subpagesObj.goToPage(templateInst, this.pageIndex, {});
+Template.lmSubpagesContents.events({
+  'click .lm-subpages-contents-page': function(evt, template) {
+    var templateInst =lmSubpagesPrivate.getMainTemplate();
+    lmSubpages.goToPage(templateInst, this.pageIndex, {});
   }
 });

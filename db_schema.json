@@ -114,8 +114,8 @@
         "rating": "{Number} [1 to 10 on the priority / importance for this tag.]",
         "comment": "{String} [used as qualitative reasoning to explain / back up the quantitative rating]",
         "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00",
-        "__commentVouches": "only if 'roleIds' is NOT set - roles are for hiring and once filled may no longer be present (and new roles can not be vouched for anyway since there is no data yet!). Each organization should have a copy of this same tag with the 'roleIds' tag unset to store vouches for; roles are just temporary.",
-        "vouches": [
+        "__commentReviews": "only if 'roleIds' is NOT set - roles are for hiring and once filled may no longer be present (and new roles can not be reviewed anyway since there is no data yet!). Each organization should have a copy of this same tag with the 'roleIds' tag unset to store reviews for; roles are just temporary.",
+        "reviews": [
           {
             "userId": "{String} [the id of the user posting this comment]",
             "rating": "{Number} [1 to 10 on the priority / importance for this tag.]",
@@ -177,7 +177,7 @@
         "rating": "{Number} [1 to 10 on the priority / importance for this tag.]",
         "comment": "{String} [used as qualitative reasoning to explain / back up the quantitative rating]",
         "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00",
-        "vouches": [
+        "reviews": [
           {
             "userId": "{String} [the id of the user posting this comment]",
             "rating": "{Number} [1 to 10 on the priority / importance for this tag.]",
