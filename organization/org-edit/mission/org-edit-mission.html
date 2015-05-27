@@ -1,4 +1,13 @@
 <template name="orgEditMission">
+  <div class='org-edit-subpage-header'>
+    <div class='margin-b'>
+      What is your mission? These are your OUTWARD facing things you do. The product or service your provide, the area, market, or sector you work in, why you exist, your purpose and vision.
+    </div>
+    <div class='margin-b'>
+      Some examples of broad ones (feel free to get more specific!) are: 'environment', 'advertising', 'education', 'enterprise software', 'fashion', 'hardware', 'health', 'fitness', 'payments', 'productivity', 'recruiting', 'sports', 'transportation', 'travel'.
+    </div>
+  </div>
+
   <div class='org-edit-form'>
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
       {{> afArrayField name="tags" type="tag" label="Mission" opts=optsTags}}

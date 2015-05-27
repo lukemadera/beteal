@@ -1,4 +1,13 @@
 <template name="orgEditSkillsSeeking">
+  <div class='org-edit-subpage-header'>
+    <div class='margin-b'>
+      What skills are you seeking (from others who may want to join your team / help you)?
+    </div>
+    <div class='margin-b'>
+      E.g. 'sales', 'marketing', 'software engineering', 'fundraising', 'product', 'javascript', 'AngularJS'.
+    </div>
+  </div>
+
   <div class='org-edit-form'>
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
       {{> afArrayField name="tags" type="tag" label="Skill" opts=optsTags}}

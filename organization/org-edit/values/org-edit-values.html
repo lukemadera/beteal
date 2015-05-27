@@ -1,4 +1,13 @@
 <template name="orgEditValues">
+  <div class='org-edit-subpage-header'>
+    <div class='margin-b'>
+      What are your core values? These are your INWARD facing, day to day beliefs you hold and live by.
+    </div>
+    <div class='margin-b'>
+      Some suggested ones IF they fit you: 'teal', 'self management', 'wholeness', 'evolutionary purpose', 'benefit corp'.
+    </div>
+  </div>
+  
   <div class='org-edit-form'>
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
       {{> afArrayField name="tags" type="tag" label="Value" opts=optsTags}}
