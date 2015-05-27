@@ -1,10 +1,11 @@
 /**
 @toc
+afTag.
+  12. preSave
 1. AutoForm.addInputType("tag",..
 afTagPrivate.
-  12. preSave
+  13. filterCategoryStatus
   2. init
-  13. initForm
   3. getTag
   4. updateVal
   5. getPredictions
@@ -37,20 +38,6 @@ So the input and output format are as follows but only a tag name, rating, and c
 
 @param {Object} [atts.opts]
 */
-
-// afTagSchema = new SimpleSchema({
-//   name: {
-//     type: String
-//   },
-//   rating: {
-//     type: Number,
-//     min: 1,
-//     max: 10
-//   },
-//   comment: {
-//     type: String
-//   }
-// });
 
 afTag ={};
 afTag.newTagPrefix ='__';
@@ -143,6 +130,26 @@ if(Meteor.isClient) {
     }
   });
 
+
+  /**
+  @toc 13.
+  */
+  // afTagPrivate.filterCategoryStatus =function(templateInst, tag, category, status, params) {
+  //   // var ret ={active:true};
+  //   var classes =templateInst.classes.get();
+  //   //strip out tag if not proper category and status
+  //   if(tag.category !==category || tag.status !==status) {
+  //     // ret.active =false;
+  //     classes.active ='hidden';
+  //   }
+  //   else {
+  //     classes.active ='visible';
+  //   }
+  //   templateInst.classes.set(classes);
+
+  //   // return ret;
+  // };
+
   /**
   @toc 2.
   */
@@ -171,10 +178,10 @@ if(Meteor.isClient) {
         name: val
       };
     }
-    if(opts.category !==undefined) {
+    if(opts.category !==undefined && val.category ===undefined) {
       val.category =opts.category;
     }
-    if(opts.status !==undefined) {
+    if(opts.status !==undefined && val.status ===undefined) {
       val.status =opts.status;
     }
     val =afTagPrivate.getTag(templateInst, val, {});
@@ -186,6 +193,8 @@ if(Meteor.isClient) {
     if(val.name && val.tagId) {
       afTagPrivate.updateVal(templateInst, 'name', {_id:val.tagId, name:val.name}, {});
     }
+
+    // afTagPrivate.filterCategoryStatus(templateInst, val, opts.category, opts.status, {});
   };
 
   /**
@@ -287,7 +296,8 @@ if(Meteor.isClient) {
 
     this.predictions =new ReactiveVar([]);
     this.classes =new ReactiveVar({
-      predictions: 'hidden'
+      predictions: 'hidden',
+      active: 'visible'
     });
   };
 

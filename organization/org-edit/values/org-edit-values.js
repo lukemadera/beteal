@@ -10,7 +10,7 @@ if(Meteor.isClient) {
   Template.orgEditValues.helpers({
     organization: function() {
       var org =Template.instance().org.get();
-      //@todo - strip out tags that are not values category / status
+      org.tags =orgEdit.tagsFilterCategoryStatus(org.tags, 'values', 'both', {});
       return org;
     },
     ids: function() {

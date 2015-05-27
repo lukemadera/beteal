@@ -1,4 +1,5 @@
 <template name='afTag'>
+  <!-- <div class='{{classes.active}}'> -->
   <!-- {{#autoForm schema="afTagSchema" id=ids.form doc=tag resetOnSuccess=false}} -->
     <!-- MUST have an element with a data-schema-key field that matches otherwise valueOut will not be called / things will not work properly! -->
     <input type="hidden" value="{{this.value}}" {{atts}} />
@@ -24,4 +25,5 @@
     </div>
     {{> afQuickField name=schemaNames.comment rows=4 placeholder="Explain the rating you gave above" class="bt-autoform-tag-comment-input"}}
   <!-- {{/autoForm}} -->
+  <!-- </div> -->
 </template>
