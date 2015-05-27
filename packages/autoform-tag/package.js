@@ -16,14 +16,18 @@ Package.onUse(function(api) {
   api.use('blaze@2.0.0');
   api.use('aldeed:autoform@4.0.0 || 5.0.0');
   api.use('reactive-var@1.0.5');
+  api.use('nrane9:banner-alert@0.0.2');
 
   api.addFiles([
     'autoform-tag.html',
-    'autoform-tag.css',
-    'autoform-tag.js'
+    'autoform-tag.css'
   ], 'client');
+  api.addFiles([
+    'autoform-tag.js'
+  ]);
 
   api.export('afTagSchema');
+  api.export('afTag');
 });
 
 Package.onTest(function(api) {

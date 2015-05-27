@@ -1,9 +1,14 @@
 <template name="layout">
   <div class='layout-body {{classes.contBody}}'>
     {{> header}}
+    {{> bannerAlert customClose='bannerClose'}}
     <div class='layout-content {{classes.cont}}' style='min-height:{{minHeight}}px;'>
       {{> yield}}
     </div>
   </div>
 
+</template>
+
+<template name='bannerClose'>
+  <div class='fa fa-close'></div>
 </template>

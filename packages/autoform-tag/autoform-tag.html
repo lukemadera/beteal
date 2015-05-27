@@ -1,18 +1,27 @@
 <template name='afTag'>
-  {{#autoForm schema="afTagSchema" id=ids.form doc=tag resetOnSuccess=false}}
+  <!-- {{#autoForm schema="afTagSchema" id=ids.form doc=tag resetOnSuccess=false}} -->
+    <!-- MUST have an element with a data-schema-key field that matches otherwise valueOut will not be called / things will not work properly! -->
+    <input type="hidden" value="{{this.value}}" {{atts}} />
+    
     <div class='flexbox'>
       <div class='flex1 bt-autoform-tag-name-input-cont'>
-        {{> afQuickField name="name" class="bt-autoform-tag-name-input"}}
+        {{> afQuickField name=schemaNames.name class="bt-autoform-tag-name-input"}}
         <div class='bt-autoform-tag-predictions {{classes.predictions}}'>
           {{#each predictions}}
-            <div class='bt-autoform-tag-prediction-item'>{{name}}</div>
+            <div class='bt-autoform-tag-prediction-item'>
+              {{#if xDisplay.name}}
+                {{xDisplay.name}}
+              {{else}}
+                {{name}}
+              {{/if}}
+            </div>
           {{/each}}
         </div>
       </div>
       <div class='margin-l'>
-        {{> afQuickField name="rating" class="bt-autoform-tag-rating-input"}}
+        {{> afQuickField name=schemaNames.rating class="bt-autoform-tag-rating-input"}}
       </div>
     </div>
-    {{> afQuickField name="comment" rows=4 placeholder="Explain the rating you gave above" class="bt-autoform-tag-comment-input"}}
-  {{/autoForm}}
+    {{> afQuickField name=schemaNames.comment rows=4 placeholder="Explain the rating you gave above" class="bt-autoform-tag-comment-input"}}
+  <!-- {{/autoForm}} -->
 </template>

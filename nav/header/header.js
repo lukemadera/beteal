@@ -110,8 +110,14 @@ if(Meteor.isClient){
   navConfig.orgeditlocations =EJSON.clone(navConfig.orgedit);
   navConfig.orgeditlocations.url = 'org-edit/locations';
 
-  navConfig.orgedittags =EJSON.clone(navConfig.orgedit);
-  navConfig.orgedittags.url = 'org-edit/tags';
+  navConfig.orgeditvalues =EJSON.clone(navConfig.orgedit);
+  navConfig.orgeditvalues.url = 'org-edit/values';
+
+  navConfig.orgeditmission =EJSON.clone(navConfig.orgedit);
+  navConfig.orgeditmission.url = 'org-edit/mission';
+
+  navConfig.orgeditskillsseeking =EJSON.clone(navConfig.orgedit);
+  navConfig.orgeditskillsseeking.url = 'org-edit/skills-seeking';
 
   Session.set('navUpdated', false);
 

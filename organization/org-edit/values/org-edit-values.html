@@ -1,7 +1,7 @@
-<template name="orgEditTags">
+<template name="orgEditValues">
   <div class='org-edit-form'>
     {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
-      {{> afArrayField name="tags" type="tag" label="Tag"}}
+      {{> afArrayField name="tags" type="tag" label="Value" opts=optsTags}}
 
       <div class='margin-t center'>
         <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>

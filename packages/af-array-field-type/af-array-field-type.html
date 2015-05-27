@@ -11,7 +11,7 @@
           {{> afQuickField type="googleplace" name=this.name label=../atts.label}}
         {{/if}}
         {{#if typeIs "tag"}}
-          {{> afQuickField type="tag" name=this.name label=../atts.label}}
+          {{> afQuickField type="tag" name=this.name label=../atts.label opts=../atts.opts}}
         {{/if}}
         {{#if typeIs ""}}
           {{> afQuickField name=this.name label=false options=afOptionsFromSchema}}

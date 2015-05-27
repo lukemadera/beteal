@@ -1,4 +1,21 @@
 /**
+@toc
+1. AutoForm.addInputType("tag",..
+afTagPrivate.
+  12. preSave
+  2. init
+  13. initForm
+  3. getTag
+  4. updateVal
+  5. getPredictions
+  6. hide
+  7. show
+Template.afTag.
+  8. created
+  9. rendered
+  10. helpers
+  11. events
+
 
 Requires "TagsCollection" subscription to be made outside this package!
 
@@ -21,92 +38,173 @@ So the input and output format are as follows but only a tag name, rating, and c
 @param {Object} [atts.opts]
 */
 
-afTagSchema = new SimpleSchema({
-  name: {
-    type: String
-  },
-  rating: {
-    type: Number,
-    min: 1,
-    max: 10
-  },
-  comment: {
-    type: String
+// afTagSchema = new SimpleSchema({
+//   name: {
+//     type: String
+//   },
+//   rating: {
+//     type: Number,
+//     min: 1,
+//     max: 10
+//   },
+//   comment: {
+//     type: String
+//   }
+// });
+
+afTag ={};
+afTag.newTagPrefix ='__';
+var afTagPrivate ={};
+
+Meteor.methods({
+  createNewTag: function(tagName, params) {
+    var ret ={tagId: false};
+    if(Meteor.isServer) {
+      //ensure does not already exist
+      var tag =TagsCollection.findOne({name:tagName});
+      if(tag) {
+        ret.tagId =tag._id;
+      }
+      //create new
+      else {
+        var tagId =TagsCollection.insert({name:tagName});
+        ret.tagId =tagId;
+      }
+    }
+    return ret;
   }
 });
 
-var VAL ={};    //one per instid
-
-AutoForm.addInputType("tag", {
-  template: "afTag",
-  valueIn: function(val) {
-    //will convert to display value later after set / extend opts
-    return val;
-  },
-  valueOut: function() {
-    var instid =this.attr('data-schema-key');
-    return VAL[instid];
+/**
+@toc 12.
+*/
+afTag.preSave =function(val, params) {
+  //remove any temporary / form input only fields that should NOT actually be saved on the backend
+  if(val.name !==undefined) {
+    delete val.name;
   }
-});
 
-var afTag ={
-  init: function(templateInst, params) {
+  if(val._id ===undefined) {
+    val._id =new Mongo.ObjectID().toHexString();
+  }
+  if(val.createdAt ===undefined) {
+    val.createdAt =moment().format('YYYY-MM-DD HH:mm:ssZ');
+  }
+
+  //check if a new tag that needs to be created
+  if(val.tagId ===undefined) {
+    if(val.rating !==undefined && val.comment !==undefined) {
+      // nrAlert.alert("tag is required");
+      console.log("tag is required");
+    }
+  }
+  else {
+    if(val.tagId.slice(0, afTag.newTagPrefix.length) ===afTag.newTagPrefix) {
+      var newTagName =val.tagId.slice((afTag.newTagPrefix.length), val.tagId.length);
+      var result =Meteor.call("createNewTag", newTagName);
+      if(result && result.tagId) {
+        val.tagId =result.tagId;
+      }
+      else {
+        console.log("error saving new tag: "+newTagName, result);
+      }
+
+      // Meteor.call("createNewTag", newTagName, function(error, result) {
+      //   if(!error && result) {
+      //     val.tagId =result.tagId;
+      //     console.log('createNewTag: result.tagId: ', val.tagId, result);
+      //   }
+      //   else {
+      //     nrAlert.alert("error saving new tag: "+newTagName);
+      //   }
+      // });
+    }
+  }
+  return val;
+};
+
+
+if(Meteor.isClient) {
+  var VAL ={};    //one per instid
+
+  /**
+  @toc 1.
+  */
+  AutoForm.addInputType("tag", {
+    template: "afTag",
+    valueIn: function(val) {
+      //will convert to display value later after set / extend opts
+      return val;
+    },
+    valueOut: function() {
+      var instid =this.attr('data-schema-key');
+      //can create new tag and get id on backend from here - no async?
+      return VAL[instid];
+    }
+  });
+
+  /**
+  @toc 2.
+  */
+  afTagPrivate.init =function(templateInst, params) {
     var optsDefault ={
     };
-    var xx;
-    templateInst.opts =EJSON.clone(templateInst.data.atts.opts);
-    if(templateInst.opts ===undefined) {
-      templateInst.opts =EJSON.clone(optsDefault);
+    var xx, opts;
+    opts =EJSON.clone(templateInst.data.atts.opts);
+    if(opts ===undefined) {
+      opts =EJSON.clone(optsDefault);
     }
     else {
       //extend
       for(xx in optsDefault) {
-        if(templateInst.opts[xx] ===undefined) {
-          templateInst.opts[xx] =optsDefault[xx];
+        if(opts[xx] ===undefined) {
+          opts[xx] =optsDefault[xx];
         }
       }
     }
+    templateInst.opts =opts;
 
     var val =templateInst.data.value;
+
+    if(typeof(val) ==='string') {
+      val ={
+        name: val
+      };
+    }
+    if(opts.category !==undefined) {
+      val.category =opts.category;
+    }
+    if(opts.status !==undefined) {
+      val.status =opts.status;
+    }
+    val =afTagPrivate.getTag(templateInst, val, {});
+
     var instid =templateInst.data.atts['data-schema-key'];
     VAL[instid] =val;
 
-    afTag.getTag(templateInst, val, {});
-  },
+    //has to be AFTER VAL[instid] is set
+    if(val.name && val.tagId) {
+      afTagPrivate.updateVal(templateInst, 'name', {_id:val.tagId, name:val.name}, {});
+    }
+  };
 
-  // initForm: function(templateInst, params) {
-  //   var formId =templateInst.get('ids').form;
-  //   //add on submit hook
-  //   AutoForm.addHooks(formId, {
-  //     onSubmit: function(insertDoc, updateDoc, currentDoc) {
-  //       var self =this;
-
-  //       //without this, it submits the form..
-  //       self.event.preventDefault();
-  //       self.event.stopPropagation();
-
-
-
-  //       this.done();
-  //       return false;
-  //     }
-  //   });
-  // }
-
-  getTag: function(templateInst, val, params) {
-    var tag ={};
+  /**
+  @toc 3.
+  */
+  afTagPrivate.getTag =function(templateInst, val, params) {
     if(val && val.tagId) {
       var tag1 =TagsCollection.findOne({_id: val.tagId});
-      tag ={
-        name: tag1.name,
-        rating: val.rating,
-        comment: val.comment
-      };
+      if(tag1 && tag1.name) {
+        val.name =tag1.name;
+      }
     }
-    templateInst.tag.set(tag);
-  },
+    return val;
+  };
 
-  updateVal: function(templateInst, key, val, params) {
+  /**
+  @toc 4.
+  */
+  afTagPrivate.updateVal =function(templateInst, key, val, params) {
     var instid =templateInst.data.atts['data-schema-key'];
     var val1 =VAL[instid];
     if(key ==='rating' || key ==='comment') {
@@ -117,14 +215,23 @@ var afTag ={
         val1.tagId =val._id;
       }
       else {
-        val1.tagId ='__'+val.name;
+        val1.tagId =afTag.newTagPrefix+val.name;
       }
+
+      //update UI too
+      // templateInst.data.value.name =val.name;
+      var ele =templateInst.find('input.bt-autoform-tag-name-input');
+      ele.value =val.name;
+
       this.hide(templateInst, {});
     }
     VAL[instid] =val1;
-  },
+  };
 
-  getPredictions: function(templateInst, val, params) {
+  /**
+  @toc 5.
+  */
+  afTagPrivate.getPredictions =function(templateInst, val, params) {
     var predictions =[];
     var query ={
       name: {
@@ -138,81 +245,119 @@ var afTag ={
       predictions =[
         {
           name: val,
-          _id: ''
+          _id: '',
+          xDisplay: {
+            name: '*'+val
+          }
         }
       ];
     }
     this.show(templateInst, {});
     templateInst.predictions.set(predictions);
-  },
+  };
 
-  hide: function(templateInst, params) {
+  /**
+  @toc 6.
+  */
+  afTagPrivate.hide =function(templateInst, params) {
     var classes =templateInst.classes.get();
     classes.predictions ='hidden';
     templateInst.classes.set(classes);
-  },
+  };
 
-  show: function(templateInst, params) {
+  /**
+  @toc 7.
+  */
+  afTagPrivate.show =function(templateInst, params) {
     var classes =templateInst.classes.get();
     classes.predictions ='visible';
     templateInst.classes.set(classes);
-  }
-};
+  };
 
-Template.afTag.created =function() {
-  this.opts ={};
+  /**
+  @toc 8.
+  */
+  Template.afTag.created =function() {
+    this.opts ={};
 
-  var id1 ="afTag"+(Math.random() + 1).toString(36).substring(7);
-  this.ids = new ReactiveVar({
-    form: id1+"Form"
+    var id1 ="afTag"+(Math.random() + 1).toString(36).substring(7);
+    this.ids = new ReactiveVar({
+      form: id1+"Form"
+    });
+
+    this.predictions =new ReactiveVar([]);
+    this.classes =new ReactiveVar({
+      predictions: 'hidden'
+    });
+  };
+
+  /**
+  @toc 9.
+  */
+  Template.afTag.rendered =function() {
+    //LAME! need timeout otherwise current value sometimes is not set yet..   //@todo - fix this
+    var templateInst =this;
+    afTagPrivate.init(templateInst, {});
+    setTimeout(function() {
+      afTagPrivate.init(templateInst, {});
+    }, 1000);
+    // this.autorun(function() {
+    //   afTagPrivate.init(Template.instance(), {});
+    // });
+  };
+
+  /**
+  @toc 10.
+  */
+  Template.afTag.helpers({
+    //fix to avoid error for passed in object
+    // - https://github.com/aldeed/meteor-autoform-bs-datepicker/issues/3
+    // - https://github.com/aldeed/meteor-autoform-bs-datepicker/commit/3977aa69b61152cf8c0f731a11676b087d2ec9df
+    atts: function() {
+      var atts =EJSON.clone(this.atts);
+      delete atts.opts;
+      return atts;
+    },
+    schemaNames: function() {
+      //dynamically form input / schema names for this array index item for the parent / main / only form since can NOT use nested form with separate schema here (nested form seems to mess things up and the whole page is reloaded / form is submitted..)
+      var atts =EJSON.clone(this.atts);
+      if(atts.opts) {
+        delete atts.opts;
+      }
+      var prefix =atts.name+'.';
+      var names ={
+        name: prefix+'name',
+        rating: prefix+'rating',
+        comment: prefix+'comment'
+      };
+      return names;
+    },
+    classes: function() {
+      return Template.instance().classes.get();
+    },
+    ids: function() {
+      return Template.instance().ids.get();
+    },
+    predictions: function() {
+      return Template.instance().predictions.get();
+    }
   });
 
-  this.tag =new ReactiveVar({});
-
-  this.predictions =new ReactiveVar([]);
-  this.classes =new ReactiveVar({
-    predictions: 'hidden'
+  /**
+  @toc 11.
+  */
+  Template.afTag.events({
+    'blur .bt-autoform-tag-rating-input': function(evt, template) {
+      afTagPrivate.updateVal(template, 'rating', evt.target.value, {});
+    },
+    'blur .bt-autoform-tag-comment-input': function(evt, template) {
+      afTagPrivate.updateVal(template, 'comment', evt.target.value, {});
+    },
+    'keyup .bt-autoform-tag-name-input': function(evt, template) {
+      afTagPrivate.getPredictions(template, evt.target.value, {});
+    },
+    'click .bt-autoform-tag-prediction-item': function(evt, template) {
+      afTagPrivate.updateVal(template, 'name', this, {});
+    }
   });
-};
-
-Template.afTag.rendered =function() {
-  afTag.init(this, {});
-};
-
-Template.afTag.helpers({
-  //fix to avoid error for passed in object
-  // - https://github.com/aldeed/meteor-autoform-bs-datepicker/issues/3
-  // - https://github.com/aldeed/meteor-autoform-bs-datepicker/commit/3977aa69b61152cf8c0f731a11676b087d2ec9df
-  atts: function() {
-    var atts =EJSON.clone(this.atts);
-    delete atts.opts;
-    return atts;
-  },
-  classes: function() {
-    return Template.instance().classes.get();
-  },
-  tag: function() {
-    return Template.instance().tag.get();
-  },
-  ids: function() {
-    return Template.instance().ids.get();
-  },
-  predictions: function() {
-    return Template.instance().predictions.get();
-  }
-});
-
-Template.afTag.events({
-  'blur .bt-autoform-tag-rating-input': function(evt, template) {
-    afTag.updateVal(template, 'rating', evt.target.value, {});
-  },
-  'blur .bt-autoform-tag-comment-input': function(evt, template) {
-    afTag.updateVal(template, 'comment', evt.target.value, {});
-  },
-  'keyup .bt-autoform-tag-name-input': function(evt, template) {
-    afTag.getPredictions(template, evt.target.value, {});
-  },
-  'click .bt-autoform-tag-prediction-item': function(evt, template) {
-    afTag.updateVal(template, 'name', this, {});
-  }
-});
+}
