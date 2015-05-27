@@ -310,7 +310,7 @@ if(Meteor.isClient) {
     afTagPrivate.init(templateInst, {});
     setTimeout(function() {
       afTagPrivate.init(templateInst, {});
-    }, 1000);
+    }, 750);
     // this.autorun(function() {
     //   afTagPrivate.init(Template.instance(), {});
     // });

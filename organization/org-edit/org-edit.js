@@ -20,8 +20,6 @@ Meteor.methods({
             doc.tags[ii] =afTag.preSave(doc.tags[ii], {});
           }
         }
-
-        console.log('preSave: doc: ', doc);
         return doc;
       }
 
@@ -51,9 +49,7 @@ Meteor.methods({
       */
       function updateTagsSetLocal(doc, docId, params) {
         if(doc.$set.tags !==undefined && doc.$set.tags.length) {
-          console.log('docId: ', docId);
           var org =OrganizationsCollection.findOne({_id:docId});
-          console.log('org.tags: ', org.tags);
           var ii, index1, key;
 
           function isEmptyObjectLocal(obj, params) {
@@ -104,7 +100,6 @@ Meteor.methods({
               }
 
               if(doc.$set.tags[ii]._id !==undefined) {
-                console.log('doc.$set.tags[ii]._id: ', doc.$set.tags[ii]._id);
                 index1 =nrArray.findArrayIndex(org.tags, '_id', doc.$set.tags[ii]._id, {});
                 if(index1 >-1) {
                   var key ='tags.'+index1;
@@ -143,7 +138,6 @@ Meteor.methods({
         doc.$set =preSave(doc.$set, {});
         doc =updateTagsSetLocal(doc, docId, {});
         var modifier =doc;
-        console.log('modifier: ', JSON.stringify(modifier));
         //can NOT do BOTH $set and $push operations at same time apparently.. so break into two.
         var modifierPull =false;
         var modifierPush =false;
@@ -164,11 +158,9 @@ Meteor.methods({
           OrganizationsCollection.update({_id:docId}, modifier);
         }
         if(modifierPull) {
-          console.log('modifierPull: ', JSON.stringify(modifierPull));
           OrganizationsCollection.update({_id:docId}, modifierPull);
         }
         if(modifierPush) {
-          console.log('modifierPush: ', JSON.stringify(modifierPush));
           OrganizationsCollection.update({_id:docId}, modifierPush);
         }
 
@@ -226,7 +218,6 @@ if(Meteor.isClient) {
     };
     AutoForm.addHooks(saveVars.formId, {
       onSubmit: function(insertDoc, updateDoc, currentDoc) {
-        console.log('orgEdit onSubmit: ', insertDoc, updateDoc, currentDoc);
         var self =this;
         //without this, it submits the form..
         self.event.preventDefault();
@@ -357,12 +348,12 @@ if(Meteor.isClient) {
         template: "orgEditMission",
         link: "org-edit/mission"+urlSuffix
       },
-      // {
-      //   key: "skills-seeking",
-      //   title: "Skills Desired",
-      //   template: "orgEditSkillsSeeking",
-      //   link: "org-edit/skills-seeking"+urlSuffix
-      // }
+      {
+        key: "skills-seeking",
+        title: "Skills Desired",
+        template: "orgEditSkillsSeeking",
+        link: "org-edit/skills-seeking"+urlSuffix
+      }
     ];
 
     templateInst.subpages.set(subpages);
