@@ -4,7 +4,6 @@ afTag.
   12. preSave
 1. AutoForm.addInputType("tag",..
 afTagPrivate.
-  13. filterCategoryStatus
   2. init
   3. getTag
   4. updateVal
@@ -115,6 +114,20 @@ if(Meteor.isClient) {
   var VAL ={};    //one per instid
 
   /**
+  Used to link autocomplete opts.instid to templateInst to be able to go back and forth (for autocomplete API calls / callback function that pass back the instance id and need to use that to get the proper template)
+  @example
+  afTagPrivate.instAutocomplete ={
+    'inst1': {
+      templateInst: templateInst1
+    },
+    'inst2': {
+      templateInst: templateInst2
+    }
+  };
+  */
+  afTagPrivate.instAutocomplete ={};
+
+  /**
   @toc 1.
   */
   AutoForm.addInputType("tag", {
@@ -129,26 +142,6 @@ if(Meteor.isClient) {
       return VAL[instid];
     }
   });
-
-
-  /**
-  @toc 13.
-  */
-  // afTagPrivate.filterCategoryStatus =function(templateInst, tag, category, status, params) {
-  //   // var ret ={active:true};
-  //   var classes =templateInst.classes.get();
-  //   //strip out tag if not proper category and status
-  //   if(tag.category !==category || tag.status !==status) {
-  //     // ret.active =false;
-  //     classes.active ='hidden';
-  //   }
-  //   else {
-  //     classes.active ='visible';
-  //   }
-  //   templateInst.classes.set(classes);
-
-  //   // return ret;
-  // };
 
   /**
   @toc 2.
@@ -198,6 +191,19 @@ if(Meteor.isClient) {
   };
 
   /**
+  */
+  afTagPrivate.destroy =function(templateInst, params) {
+    //remove instid id key
+    var xx;
+    for(xx in afTagPrivate.instAutocomplete) {
+      if(afTagPrivate.instAutocomplete[xx].templateInst ===templateInst) {
+        delete afTagPrivate.instAutocomplete[xx];
+        break;
+      }
+    }
+  };
+
+  /**
   @toc 3.
   */
   afTagPrivate.getTag =function(templateInst, val, params) {
@@ -212,6 +218,8 @@ if(Meteor.isClient) {
 
   /**
   @toc 4.
+  @param {Object} params
+    @param {Boolean} [noSetAutocomplete] True to NOT update autcomplete val (to avoid endless loop if this function is being called from the autocomplete value being updated there)
   */
   afTagPrivate.updateVal =function(templateInst, key, val, params) {
     var instid =templateInst.data.atts['data-schema-key'];
@@ -227,61 +235,75 @@ if(Meteor.isClient) {
         val1.tagId =afTag.newTagPrefix+val.name;
       }
 
-      //update UI too
-      // templateInst.data.value.name =val.name;
-      var ele =templateInst.find('input.bt-autoform-tag-name-input');
-      ele.value =val.name;
+      if(params.noSetAutocomplete ===undefined || !params.noSetAutocomplete) {
+        var optsAutocomplete =templateInst.optsAutocomplete.get();
+        lmAfAutocomplete.setVals({value:val1.tagId, name:val1.name}, {optsInstid:optsAutocomplete.instid});
+      }
 
-      this.hide(templateInst, {});
+      // //update UI too
+      // // templateInst.data.value.name =val.name;
+      // var ele =templateInst.find('input.bt-autoform-tag-name-input');
+      // ele.value =val.name;
+
+      // this.hide(templateInst, {});
     }
     VAL[instid] =val1;
   };
 
   /**
-  @toc 5.
+  @toc 5.5.
   */
-  afTagPrivate.getPredictions =function(templateInst, val, params) {
-    var predictions =[];
+  afTagPrivate.getPredictions1 =function(name, params) {
+    var ret ={predictions:[]};
     var query ={
       name: {
-        $regex: '^'+val,
+        $regex: '^'+name,
         $options: 'i'
       }
     };
-    predictions =TagsCollection.find(query, {fields: {_id:1, name:1}}).fetch();
-    //if none, show the val for allowing creation
-    if(!predictions.length) {
-      predictions =[
-        {
-          name: val,
-          _id: '',
-          xDisplay: {
-            name: '*'+val
-          }
-        }
-      ];
+    var predictions1 =TagsCollection.find(query, {fields: {_id:1, name:1}}).fetch();
+    ret.predictions =predictions1.map(function(obj) {
+      return {
+        value: obj._id,
+        name: obj.name
+      }
+    });
+    return ret;
+  };
+
+  afTagPrivate.updateValAutocomplete =function(instid, val, params) {
+    if(afTagPrivate.instAutocomplete[instid] !==undefined) {
+      templateInst =afTagPrivate.instAutocomplete[instid].templateInst;
+      afTagPrivate.updateVal(templateInst, 'name', {_id:val.value, name:val.name}, {noSetAutocomplete:true});
     }
-    this.show(templateInst, {});
-    templateInst.predictions.set(predictions);
   };
 
-  /**
-  @toc 6.
-  */
-  afTagPrivate.hide =function(templateInst, params) {
-    var classes =templateInst.classes.get();
-    classes.predictions ='hidden';
-    templateInst.classes.set(classes);
-  };
+  // /**
+  // @toc 5.
+  // */
+  // afTagPrivate.getPredictions =function(templateInst, val, params) {
+  //   var predictions =this.getPredictions1(val, {}).predictions;
+  //   this.show(templateInst, {});
+  //   templateInst.predictions.set(predictions);
+  // };
 
-  /**
-  @toc 7.
-  */
-  afTagPrivate.show =function(templateInst, params) {
-    var classes =templateInst.classes.get();
-    classes.predictions ='visible';
-    templateInst.classes.set(classes);
-  };
+  // /**
+  // @toc 6.
+  // */
+  // afTagPrivate.hide =function(templateInst, params) {
+  //   var classes =templateInst.classes.get();
+  //   classes.predictions ='hidden';
+  //   templateInst.classes.set(classes);
+  // };
+
+  // /**
+  // @toc 7.
+  // */
+  // afTagPrivate.show =function(templateInst, params) {
+  //   var classes =templateInst.classes.get();
+  //   classes.predictions ='visible';
+  //   templateInst.classes.set(classes);
+  // };
 
   /**
   @toc 8.
@@ -290,15 +312,26 @@ if(Meteor.isClient) {
     this.opts ={};
 
     var id1 ="afTag"+(Math.random() + 1).toString(36).substring(7);
-    this.ids = new ReactiveVar({
-      form: id1+"Form"
-    });
+    // this.ids = new ReactiveVar({
+    //   form: id1+"Form"
+    // });
 
-    this.predictions =new ReactiveVar([]);
-    this.classes =new ReactiveVar({
-      predictions: 'hidden',
-      active: 'visible'
+    var instid1 =id1+"Autocomplete";
+    this.optsAutocomplete =new ReactiveVar({
+      instid: instid1,
+      newNamePrefix: afTag.newTagPrefix,
+      getPredictions: afTagPrivate.getPredictions1,
+      onUpdateVals: afTagPrivate.updateValAutocomplete,
+      multi: 1
     });
+    afTagPrivate.instAutocomplete[instid1] ={
+      templateInst: this
+    };
+
+    // this.predictions =new ReactiveVar([]);
+    // this.classes =new ReactiveVar({
+    //   predictions: 'hidden'
+    // });
   };
 
   /**
@@ -314,6 +347,12 @@ if(Meteor.isClient) {
     // this.autorun(function() {
     //   afTagPrivate.init(Template.instance(), {});
     // });
+  };
+
+  /**
+  */
+  Template.afTag.destroyed =function() {
+    afTagPrivate.destroy(this, {});
   };
 
   /**
@@ -342,14 +381,17 @@ if(Meteor.isClient) {
       };
       return names;
     },
-    classes: function() {
-      return Template.instance().classes.get();
-    },
-    ids: function() {
-      return Template.instance().ids.get();
-    },
-    predictions: function() {
-      return Template.instance().predictions.get();
+    // classes: function() {
+    //   return Template.instance().classes.get();
+    // },
+    // ids: function() {
+    //   return Template.instance().ids.get();
+    // },
+    // predictions: function() {
+    //   return Template.instance().predictions.get();
+    // },
+    optsAutocomplete: function() {
+      return Template.instance().optsAutocomplete.get();
     }
   });
 
@@ -363,11 +405,11 @@ if(Meteor.isClient) {
     'blur .bt-autoform-tag-comment-input': function(evt, template) {
       afTagPrivate.updateVal(template, 'comment', evt.target.value, {});
     },
-    'keyup .bt-autoform-tag-name-input': function(evt, template) {
-      afTagPrivate.getPredictions(template, evt.target.value, {});
-    },
-    'click .bt-autoform-tag-prediction-item': function(evt, template) {
-      afTagPrivate.updateVal(template, 'name', this, {});
-    }
+    // 'keyup .bt-autoform-tag-name-input': function(evt, template) {
+    //   afTagPrivate.getPredictions(template, evt.target.value, {});
+    // },
+    // 'click .bt-autoform-tag-prediction-item': function(evt, template) {
+    //   afTagPrivate.updateVal(template, 'name', this, {});
+    // }
   });
 }

@@ -79,3 +79,37 @@
     </div>
   </div>
 </template>
+
+<template name="orgsFilterTag">
+  <div class='flexbox'>
+    <div class='flex1'>
+      <!-- {{> afQuickField name="tagName" label="Tag" class="orgs-filter-tag-name-input"}} -->
+      <!-- @todo -->
+      &nbsp;
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="tagCategory" label="Category" options=optsTagCategory.opts class="orgs-filter-tag-category-input"}}
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="tagStatus" label="Status" options=optsTagStatus.opts class="orgs-filter-tag-status-input"}}
+    </div>
+  </div>
+  <div>Self Rating</div>
+  <div class='flexbox'>
+    <div class='flex1'>
+      {{> afQuickField name="tagRatingSelfMin" label="Min" class="orgs-filter-tag-self-rating-min-input"}}
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="tagRatingSelfMax" label="Max" class="orgs-filter-tag-self-rating-max-input"}}
+    </div>
+  </div>
+  <div>Public Rating (average)</div>
+  <div class='flexbox'>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="tagRatingOtherMin" label="Min" class="orgs-filter-tag-other-rating-min-input"}}
+    </div>
+    <div class='flex1 margin-l'>
+      {{> afQuickField name="tagRatingOtherMax" label="Max" class="orgs-filter-tag-other-rating-max-input"}}
+    </div>
+  </div>
+</template>

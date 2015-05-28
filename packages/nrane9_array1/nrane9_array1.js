@@ -223,3 +223,22 @@ nrArray.sort2D =function(arrayUnsorted, column, params) {
   
   return sortedArray;
 };
+
+/**
+distinguishes between an object/hash (i.e. {'key':'val'}) and (scalar) array (i.e. [1, 2, 3])
+@toc 3.
+@method isArray
+*/
+nrArray.isArray =function(array1, params) {
+  /*  Cannot detect that a scalar array with an undefined first entry is an array
+    if(typeof(array1) !='string' && (array1.length !=undefined && (typeof(array1) !='object' || array1[0] !=undefined || array1.length ===0)))  {   //have to ALSO check not object since it could be an object with a "length" key!... update - typeof is object sometimes for arrays??! so now checking array1[0] too/alternatively..
+      return true;
+    }
+  */
+  if(Object.prototype.toString.apply(array1) === "[object Array]") {
+    return true;
+  }
+  else {
+    return false;
+  }
+};

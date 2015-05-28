@@ -1,3 +1,31 @@
+OrgsFiltersTagSchema =new SimpleSchema({
+  tagNames: {
+    type: [Object],
+    blackbox: true,
+    optional: true
+  },
+  // tagCategory: {
+  //   type: Array,
+  //   optional: true
+  // },
+  tagRatingSelfMin: {
+    type: Number,
+    optional: true
+  },
+  tagRatingSelfMax: {
+    type: Number,
+    optional: true
+  },
+  tagRatingOtherMin: {
+    type: Number,
+    optional: true
+  },
+  tagRatingOtherMax: {
+    type: Number,
+    optional: true
+  }
+});
+
 OrgsFiltersSchema = new SimpleSchema({
   name: {
     type: String,
@@ -29,6 +57,10 @@ OrgsFiltersSchema = new SimpleSchema({
   },
   visitsMax: {
     type: Number,
+    optional: true
+  },
+  tags: {
+    type: [OrgsFiltersTagSchema],
     optional: true
   }
 });
@@ -122,6 +154,43 @@ if(Meteor.isClient) {
           }
         ],
         defaultVal: 'show'
+      }
+      return ret;
+    }
+  });
+
+  Template.orgsFilterTag.helpers({
+    optsTagCategory: function() {
+      var ret ={
+        opts: [
+          {
+            value: 'values',
+            label: 'Values'
+          },
+          {
+            value: 'mission',
+            label: 'Mission'
+          },
+          {
+            value: 'skills',
+            label: 'Skills'
+          }
+        ]
+      }
+      return ret;
+    },
+    optsTagStatus: function() {
+      var ret ={
+        opts: [
+          {
+            value: 'have',
+            label: 'Have'
+          },
+          {
+            value: 'seeking',
+            label: 'Seeking'
+          }
+        ]
       }
       return ret;
     }

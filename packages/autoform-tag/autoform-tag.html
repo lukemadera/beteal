@@ -5,7 +5,7 @@
     <input type="hidden" value="{{this.value}}" {{atts}} />
     
     <div class='flexbox'>
-      <div class='flex1 bt-autoform-tag-name-input-cont'>
+      <!-- <div class='flex1 bt-autoform-tag-name-input-cont'>
         {{> afQuickField name=schemaNames.name class="bt-autoform-tag-name-input"}}
         <div class='bt-autoform-tag-predictions {{classes.predictions}}'>
           {{#each predictions}}
@@ -18,7 +18,11 @@
             </div>
           {{/each}}
         </div>
+      </div> -->
+      <div class='flex1'>
+        {{> afQuickField name=schemaNames.name type="lmautocomplete" opts=optsAutocomplete}}
       </div>
+
       <div class='margin-l'>
         {{> afQuickField name=schemaNames.rating class="bt-autoform-tag-rating-input"}}
       </div>
