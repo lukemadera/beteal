@@ -2,6 +2,7 @@
 @toc
 afTag.
   12. preSave
+  13. formRatingOpts
 1. AutoForm.addInputType("tag",..
 afTagPrivate.
   2. init
@@ -126,6 +127,20 @@ if(Meteor.isClient) {
   };
   */
   afTagPrivate.instAutocomplete ={};
+
+  /**
+  @toc 13.
+  */
+  afTag.formRatingOpts =function(params) {
+    var ratings =[1, 2, 3, 4, 5];
+    var optsRatings =ratings.map(function(val) {
+      return {
+        value: val,
+        label: val
+      }
+    });
+    return optsRatings;
+  };
 
   /**
   @toc 1.
@@ -392,6 +407,9 @@ if(Meteor.isClient) {
     // },
     optsAutocomplete: function() {
       return Template.instance().optsAutocomplete.get();
+    },
+    optsRatings: function() {
+      return afTag.formRatingOpts({});
     }
   });
 

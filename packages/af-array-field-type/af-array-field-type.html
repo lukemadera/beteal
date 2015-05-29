@@ -13,6 +13,33 @@
         {{#if typeIs "tag"}}
           {{> afQuickField type="tag" name=this.name label=../atts.label opts=../atts.opts}}
         {{/if}}
+        {{#if typeIs "tagsearch"}}
+          {{> afQuickField name=schemaNames.tags.name label="Tag" type="lmautocomplete" opts=../atts.opts.autocomplete}}
+          <div class='flexbox equal'>
+            <div class='flex1'>
+              {{> afQuickField name=schemaNames.tags.category label="Category" options=../atts.opts.category class="orgs-filter-tag-category-input"}}
+            </div>
+            <div class='flex1 margin-l'>
+              {{> afQuickField name=schemaNames.tags.status label="Status" options=../atts.opts.status class="orgs-filter-tag-status-input"}}
+            </div>
+          </div>
+          <div class='flexbox equal'>
+            <div class='flex1'>
+              {{> afQuickField name=schemaNames.tags.ratingSelfMin label="Min Self Rating" options=../atts.opts.ratings class="orgs-filter-tag-self-rating-min-input"}}
+            </div>
+            <div class='flex1 margin-l'>
+              {{> afQuickField name=schemaNames.tags.ratingSelfMax label="Max Self Rating" options=../atts.opts.ratings class="orgs-filter-tag-self-rating-max-input"}}
+            </div>
+          </div>
+          <div class='flexbox equal'>
+            <div class='flex1'>
+              {{> afQuickField name=schemaNames.tags.ratingOtherMin label="Min Public Rating" options=../atts.opts.ratings class="orgs-filter-tag-other-rating-min-input"}}
+            </div>
+            <div class='flex1 margin-l'>
+              {{> afQuickField name=schemaNames.tags.ratingOtherMax label="Max Public Rating" options=../atts.opts.ratings class="orgs-filter-tag-other-rating-max-input"}}
+            </div>
+          </div>
+        {{/if}}
         {{#if typeIs ""}}
           {{> afQuickField name=this.name label=false options=afOptionsFromSchema}}
         {{/if}}

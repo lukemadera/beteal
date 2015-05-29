@@ -56,7 +56,101 @@ if(Meteor.isClient) {
     return view.templateInstance();
   };
 
+  orgsObj.updateFilters =function(doc, params) {
+    var ret ={
+      locSet: false
+    };
+
+    var val;
+    var ii;
+
+    if(doc.name !==undefined) {
+      orgsObj.setFilter('name', doc.name, {});
+    }
+    else {
+      orgsObj.unsetFilter('name', {}); 
+    }
+
+    if(doc.location && doc.locationRadius || doc.locationRemote) {
+      ret.locSet =true;
+      val ={
+        remote: doc.locationRemote
+      };
+      if(doc.location && doc.locationRadius) {
+        val.location =doc.location;
+        val.radius =doc.locationRadius;
+      }
+      orgsObj.setFilter('location', val, {});
+    }
+    else {
+      orgsObj.unsetFilter('location', {}); 
+    }
+
+    if(doc.sizeMin !==undefined || doc.sizeMax !==undefined) {
+      var val ={
+      };
+      if(doc.sizeMin !==undefined) {
+        val.min =doc.sizeMin;
+      }
+      if(doc.sizeMax !==undefined) {
+        val.max =doc.sizeMax;
+      }
+      orgsObj.setFilter('size', val, {});
+    }
+    else {
+      orgsObj.unsetFilter('size', {}); 
+    }
+
+    if(doc.visitsMin !==undefined || doc.visitsMax !==undefined) {
+      var val ={
+      };
+      if(doc.visitsMin !==undefined) {
+        val.min =doc.visitsMin;
+      }
+      if(doc.visitsMax !==undefined) {
+        val.max =doc.visitsMax;
+      }
+      orgsObj.setFilter('visits', val, {});
+    }
+    else {
+      orgsObj.unsetFilter('visits', {}); 
+    }
+
+    if(doc.tags !==undefined && doc.tags.length) {
+      var val =[];
+      var atLeastOne =false;
+      var curTag ={};
+      var tt;
+      for(ii =0; ii<doc.tags.length; ii++) {
+        if(docs.tags[ii].name !==undefined && doc.tags[ii].name.length) {
+          atLeastOne =true;
+          //convert tag names objects to tag id
+          curTag =doc.tags[ii];
+          curTag.tagId =[];
+          for(tt =0; tt<curTag.name.length; tt++) {
+            curTag.tagId.push(curTag.name[tt].value);
+          }
+          delete curTag.name;
+          val.push(curTag);
+        }
+      }
+      if(atLeastOne) {
+        orgsObj.setFilter('tags', val, {});
+      }
+      else {
+        orgsObj.unsetFilter('tags', {});
+      }
+    }
+    else {
+      orgsObj.unsetFilter('tags', {});
+    }
+
+    return ret;
+  };
+
   orgsObj.initForm =function(formId, params) {
+    AutoForm.setDefaultTemplateForType('afArrayField', 'type');
+
     AutoForm.addHooks(formId, {
       onSubmit: function(insertDoc, updateDoc, currentDoc) {
         var self =this;
@@ -67,69 +161,14 @@ if(Meteor.isClient) {
         self.event.preventDefault();
         self.event.stopPropagation();
 
-        var val;
-
-        if(insertDoc.name !==undefined) {
-          orgsObj.setFilter('name', insertDoc.name, {});
-        }
-        else {
-          orgsObj.unsetFilter('name', {}); 
-        }
-
-        var locSet =false;
-        if(insertDoc.location && insertDoc.locationRadius || insertDoc.locationRemote) {
-          locSet =true;
-          val ={
-            remote: insertDoc.locationRemote
-          };
-          if(insertDoc.location && insertDoc.locationRadius) {
-            val.location =insertDoc.location;
-            val.radius =insertDoc.locationRadius;
-          }
-          orgsObj.setFilter('location', val, {});
-        }
-        else {
-          orgsObj.unsetFilter('location', {}); 
-        }
-
-        if(insertDoc.sizeMin !==undefined || insertDoc.sizeMax !==undefined) {
-          var val ={
-          };
-          if(insertDoc.sizeMin !==undefined) {
-            val.min =insertDoc.sizeMin;
-          }
-          if(insertDoc.sizeMax !==undefined) {
-            val.max =insertDoc.sizeMax;
-          }
-          orgsObj.setFilter('size', val, {});
-        }
-        else {
-          orgsObj.unsetFilter('size', {}); 
-        }
-
-        if(insertDoc.visitsMin !==undefined || insertDoc.visitsMax !==undefined) {
-          var val ={
-          };
-          if(insertDoc.visitsMin !==undefined) {
-            val.min =insertDoc.visitsMin;
-          }
-          if(insertDoc.visitsMax !==undefined) {
-            val.max =insertDoc.visitsMax;
-          }
-          orgsObj.setFilter('visits', val, {});
-        }
-        else {
-          orgsObj.unsetFilter('visits', {}); 
-        }
-
-        //@todo - tags
+        var retFilters =orgsObj.updateFilters(insertDoc, {});
 
         orgsObj.search({});
         //hide inactive filters
         orgsObj.toggleShowInactiveFilters({action:'hide'});
 
         //hack to re-select location otherwise it is blank next time around.. autoform and/or googleplace bug??   //@todo - fix this properly and remove hack
-        if(locSet) {
+        if(retFilters.locSet) {
           var templateInst =orgsObj.getMainTemplate({});
           ele =templateInst.find('.orgs-filter-location-input');
           // ele.click();   //not working
@@ -187,7 +226,7 @@ if(Meteor.isClient) {
     var query ={};
     var templateInst =this.getMainTemplate({});
     var filters =templateInst.filters.get();
-    var ii;
+    var ii, tt;
     for(ii =0; ii<filters.length; ii++) {
       if(filters[ii].active) {
         if(filters[ii].key ==='name') {
@@ -281,7 +320,62 @@ if(Meteor.isClient) {
             query.visits['$lte'] =filters[ii].val.max;
           }
         }
-        //@todo tags
+        else if(filters[ii].key ==='tags') {
+          /*
+          db.organizations.find({
+  '$and': [
+    {
+      'tags': {
+        '$elemMatch': {
+          tagId: 'umFWWE6qbHfvprwfA',
+          category: 'skills'
+        }
+      }
+    },
+    {
+      'tags': {
+        '$elemMatch': {
+          tagId: 'B3dKzeNDxJdHw3Ykd'
+        }
+      }
+    },
+    {
+      name: 'insert5 edit'
+    }
+  ]
+},{tags:1, name:1}).pretty()
+
+db.organizations.find(
+  {
+    'tags': {
+      '$elemMatch': {
+        tagId: 'umFWWE6qbHfvprwfA',
+        category: 'skills'
+      }
+    }
+  },
+  {
+    'tags': {
+      '$elemMatch': {
+        tagId: 'B3dKzeNDxJdHw3Ykd'
+      }
+    }
+  },
+  {
+    name: 'insert5 edit'
+  }
+,{tags:1, name:1}).pretty()
+*/
+          // query.tags ={
+          //   '$and': []
+          // };
+          // var tags =filters[ii].val;
+          // var subQuery ={};
+          // for(tt =0; tt<tags.length; tt++) {
+          //   subQuery.
+          //   query.tags['$and'].push(subQuery);
+          // }
+        }
       }
     }
     return query;

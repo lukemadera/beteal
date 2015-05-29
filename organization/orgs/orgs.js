@@ -4,14 +4,14 @@ OrgsFiltersTagSchema =new SimpleSchema({
     blackbox: true,
     optional: true
   },
-  // category: {
-  //   type: [String],
-  //   optional: true
-  // },
-  // status: {
-  //   type: String,
-  //   optional: true
-  // },
+  category: {
+    type: [String],
+    optional: true
+  },
+  status: {
+    type: String,
+    optional: true
+  },
   ratingSelfMin: {
     type: Number,
     optional: true
@@ -63,12 +63,8 @@ OrgsFiltersSchema = new SimpleSchema({
     type: Number,
     optional: true
   },
-  // tags: {
-  //   type: [OrgsFiltersTagSchema],
-  //   optional: true
-  // }
-  tag: {
-    type: OrgsFiltersTagSchema,
+  tags: {
+    type: [OrgsFiltersTagSchema],
     optional: true
   }
 
@@ -184,13 +180,11 @@ if(Meteor.isClient) {
   });
 
   Template.orgsFilterTag.helpers({
-    optsAutocomplete: function() {
+    optsTags: function() {
       var templateInst =orgsObj.getMainTemplate({});
-      return templateInst.optsAutocomplete.get();
-    },
-    optsTagCategory: function() {
-      var ret ={
-        opts: [
+      var opts ={
+        autocomplete: templateInst.optsAutocomplete.get(),
+        category: [
           {
             value: 'values',
             label: 'Values'
@@ -203,13 +197,8 @@ if(Meteor.isClient) {
             value: 'skills',
             label: 'Skills'
           }
-        ]
-      }
-      return ret;
-    },
-    optsTagStatus: function() {
-      var ret ={
-        opts: [
+        ],
+        status: [
           {
             value: 'have',
             label: 'Have'
@@ -218,9 +207,10 @@ if(Meteor.isClient) {
             value: 'seeking',
             label: 'Seeking'
           }
-        ]
-      }
-      return ret;
+        ],
+        ratings: afTag.formRatingOpts({})
+      };
+      return opts;
     }
   });
 }
