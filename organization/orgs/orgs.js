@@ -1,26 +1,30 @@
 OrgsFiltersTagSchema =new SimpleSchema({
-  tagNames: {
+  name: {
     type: [Object],
     blackbox: true,
     optional: true
   },
-  // tagCategory: {
-  //   type: Array,
+  // category: {
+  //   type: [String],
   //   optional: true
   // },
-  tagRatingSelfMin: {
+  // status: {
+  //   type: String,
+  //   optional: true
+  // },
+  ratingSelfMin: {
     type: Number,
     optional: true
   },
-  tagRatingSelfMax: {
+  ratingSelfMax: {
     type: Number,
     optional: true
   },
-  tagRatingOtherMin: {
+  ratingOtherMin: {
     type: Number,
     optional: true
   },
-  tagRatingOtherMax: {
+  ratingOtherMax: {
     type: Number,
     optional: true
   }
@@ -59,10 +63,15 @@ OrgsFiltersSchema = new SimpleSchema({
     type: Number,
     optional: true
   },
-  tags: {
-    type: [OrgsFiltersTagSchema],
+  // tags: {
+  //   type: [OrgsFiltersTagSchema],
+  //   optional: true
+  // }
+  tag: {
+    type: OrgsFiltersTagSchema,
     optional: true
   }
+
 });
 
 if(Meteor.isServer) {
@@ -79,6 +88,17 @@ if(Meteor.isClient) {
       form: id1+"Form"
     };
     this.ids = new ReactiveVar(ids);
+
+    var instid1 =id1+"Autocomplete";
+    this.optsAutocomplete =new ReactiveVar({
+      instid: instid1,
+      getPredictions: orgsObj.getTagPredictions,
+      multi: 1
+    });
+    orgsObj.inst[id1] ={
+      templateInst: this,
+      instidAutocomplete: instid1
+    };
 
     orgsObj.initForm(ids.form, {});
 
@@ -101,6 +121,10 @@ if(Meteor.isClient) {
 
     orgs =orgsObj.getOrgs({}, {});
     this.orgs =new ReactiveVar(orgs);
+  };
+
+  Template.orgs.destroyed =function() {
+    orgsObj.destroy(this, {});
   };
 
   Template.orgs.helpers({
@@ -160,6 +184,10 @@ if(Meteor.isClient) {
   });
 
   Template.orgsFilterTag.helpers({
+    optsAutocomplete: function() {
+      var templateInst =orgsObj.getMainTemplate({});
+      return templateInst.optsAutocomplete.get();
+    },
     optsTagCategory: function() {
       var ret ={
         opts: [

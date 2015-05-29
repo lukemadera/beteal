@@ -2,6 +2,49 @@
 
 if(Meteor.isClient) {
 
+  /**
+  Used to link autocomplete opts.instid to templateInst to be able to go back and forth (for autocomplete API calls / callback function that pass back the instance id and need to use that to get the proper template)
+  @example
+  orgsPrivate.inst ={
+    'inst1': {
+      templateInst: templateInst1
+    },
+    'inst2': {
+      templateInst: templateInst2
+    }
+  };
+  */
+  orgsObj.inst ={};
+
+  orgsObj.destroy =function(templateInst, params) {
+    //remove instid id key
+    var xx;
+    for(xx in orgsObj.inst) {
+      if(orgsObj.inst[xx].templateInst ===templateInst) {
+        delete orgObj.inst[xx];
+        break;
+      }
+    }
+  };
+
+  orgsObj.getTagPredictions =function(name, params) {
+    var ret ={predictions:[]};
+    var query ={
+      name: {
+        $regex: '^'+name,
+        $options: 'i'
+      }
+    };
+    var predictions1 =TagsCollection.find(query, {fields: {_id:1, name:1}}).fetch();
+    ret.predictions =predictions1.map(function(obj) {
+      return {
+        value: obj._id,
+        name: obj.name
+      }
+    });
+    return ret;
+  };
+
   orgsObj.getMainTemplate =function(params) {
     var view =Blaze.currentView;
     if(view.name !=="Template.orgs") {
@@ -17,6 +60,8 @@ if(Meteor.isClient) {
     AutoForm.addHooks(formId, {
       onSubmit: function(insertDoc, updateDoc, currentDoc) {
         var self =this;
+
+        console.log(insertDoc, updateDoc, currentDoc);
 
         //without this, it submits the form..
         self.event.preventDefault();
@@ -76,6 +121,8 @@ if(Meteor.isClient) {
         else {
           orgsObj.unsetFilter('visits', {}); 
         }
+
+        //@todo - tags
 
         orgsObj.search({});
         //hide inactive filters
@@ -234,6 +281,7 @@ if(Meteor.isClient) {
             query.visits['$lte'] =filters[ii].val.max;
           }
         }
+        //@todo tags
       }
     }
     return query;
@@ -322,6 +370,19 @@ if(Meteor.isClient) {
           max: ''
         }
       },
+      {
+        template: 'orgsFilterTag',
+        key: 'tag',
+        val: {
+          tags: [],
+          category: [],
+          status: '',
+          ratingSelfMin: '',
+          ratingSelfMax: '',
+          ratingOtherMin: '',
+          ratingOtherMax: ''
+        }
+      },
     ];
 
     //other properties will be init'ed in toggleShowInactiveFilters init call
@@ -368,7 +429,7 @@ if(Meteor.isClient) {
     templateInst.filters.set(filters);
 
     //clear html fields / inputs
-    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input', '.orgs-filter-size-min-input', '.orgs-filter-size-max-input', '.orgs-filter-visits-min-input', '.orgs-filter-visits-max-input'];    //hardcoded must match html classes
+    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input', '.orgs-filter-size-min-input', '.orgs-filter-size-max-input', '.orgs-filter-visits-min-input', '.orgs-filter-visits-max-input'];    //hardcoded must match html classes   //@todo - tags
     var ele;
     for(ii =0; ii<selectors.length; ii++) {
       ele =templateInst.find(selectors[ii]);

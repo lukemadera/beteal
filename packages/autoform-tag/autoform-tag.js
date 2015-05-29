@@ -322,7 +322,7 @@ if(Meteor.isClient) {
       newNamePrefix: afTag.newTagPrefix,
       getPredictions: afTagPrivate.getPredictions1,
       onUpdateVals: afTagPrivate.updateValAutocomplete,
-      multi: 1
+      createNew: true
     });
     afTagPrivate.instAutocomplete[instid1] ={
       templateInst: this
