@@ -179,7 +179,7 @@ if(Meteor.isClient) {
     }
   });
 
-  Template.orgsFilterTag.helpers({
+  Template.orgsFilterTags.helpers({
     optsTags: function() {
       var templateInst =orgsObj.getMainTemplate({});
       var opts ={

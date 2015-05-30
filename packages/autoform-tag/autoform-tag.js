@@ -27,10 +27,10 @@ So the input and output format are as follows but only a tag name, rating, and c
   "_id":"{String} 123l4k234l",
   "tagId": "{String} [Matches a tags._id field]",
   "category": "{String} [One of: 'values', 'mission', 'skills', 'resources']",
-  "status": "{String} [One of 'have' if this represents the current state or 'seeking' if looking to connect with other people who have this or 'both']",
+  "status": "{String} [One of 'have' if this represents the current state or 'seeking' if looking to connect with other people who have this or 'any']",
   "__commentRolesIds": "Each array item matches an organizations.roles._id field. If set, this tag applies ONLY to the specified roles and not organization wide.",
   "roleIds": [],
-  "rating": "{Number} [1 to 10 on the priority / importance for this tag.]",
+  "rating": "{Number} [1 to 5 on the priority / importance for this tag.]",
   "comment": "{String} [used as qualitative reasoning to explain / back up the quantitative rating]",
   "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00",
 }

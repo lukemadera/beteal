@@ -10,7 +10,7 @@ if(Meteor.isClient) {
   Template.orgEditMission.helpers({
     organization: function() {
       var org =Template.instance().org.get();
-      org.tags =orgEdit.tagsFilterCategoryStatus(org.tags, 'mission', 'both', {});
+      org.tags =orgEdit.tagsFilterCategoryStatus(org.tags, 'mission', 'any', {});
       return org;
     },
     ids: function() {
@@ -19,7 +19,7 @@ if(Meteor.isClient) {
     optsTags: function() {
       return {
         category: 'mission',
-        status: 'both'
+        status: 'any'
       }
     }
   });

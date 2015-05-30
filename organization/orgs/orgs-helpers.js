@@ -122,7 +122,7 @@ if(Meteor.isClient) {
       var curTag ={};
       var tt;
       for(ii =0; ii<doc.tags.length; ii++) {
-        if(docs.tags[ii].name !==undefined && doc.tags[ii].name.length) {
+        if(doc.tags[ii].name !==undefined && doc.tags[ii].name.length) {
           atLeastOne =true;
           //convert tag names objects to tag id
           curTag =doc.tags[ii];
@@ -223,33 +223,40 @@ if(Meteor.isClient) {
   };
 
   orgsObj.formQuery =function(params) {
-    var query ={};
+    var query ={
+      //joining all with and. While mongo db implicity does this, must explicitly use $and if want to use multiple of the same field (which we are with 'tags')
+      '$and': []
+    };
     var templateInst =this.getMainTemplate({});
     var filters =templateInst.filters.get();
-    var ii, tt;
+    var ii, tt, queryTemp, queryNotEmpty;
     for(ii =0; ii<filters.length; ii++) {
       if(filters[ii].active) {
         if(filters[ii].key ==='name') {
-          if(query['$or'] ===undefined) {
-            query['$or'] =[];
-          }
+          queryTemp ={
+            '$or': []
+          };
           var regex ={
             $regex: filters[ii].val,
             $options: 'i'
           };
-          query['$or'].push({
+          queryTemp['$or'].push({
             name: regex
           });
-          query['$or'].push({
+          queryTemp['$or'].push({
             'links.url': regex
           });
+          query['$and'].push(queryTemp);
         }
         else if(filters[ii].key ==='location') {
+          queryTemp ={};
+          queryNotEmpty =false;
           var locRemote =filters[ii].val.remote;
           if(locRemote ==='remoteOnly') {
-            query.locations ={
+            queryTemp.locations ={
               '$exists': false
             };
+            queryNotEmpty =true;
           }
           else {
             var queryLat =false, queryLng =false;
@@ -268,115 +275,130 @@ if(Meteor.isClient) {
             //hide remote
             if(locRemote ==='hide') {
               if(queryLat && queryLng) {
-                query['locations.lat'] =queryLat;
-                query['locations.lng'] =queryLng;
+                queryTemp['locations.lat'] =queryLat;
+                queryTemp['locations.lng'] =queryLng;
               }
               else {
-                query.locations ={
+                queryTemp.locations ={
                   '$exists': true
                 };
               }
+              queryNotEmpty =true;
             }
             //show remote
             else {
 
               if(queryLat && queryLng) {
-                if(query['$or'] ===undefined) {
-                  query['$or'] =[];
+                if(queryTemp['$or'] ===undefined) {
+                  queryTemp['$or'] =[];
                 }
-                query['$or'].push(
+                queryTemp['$or'].push(
                   {
                     'locations.lat': queryLat,
                     'locations.lng': queryLng
                   }
                 );
-                query['$or'].push(
+                queryTemp['$or'].push(
                   {
                     'locations': {
                       '$exists': false
                     }
                   }
                 );
+                queryNotEmpty =true;
               }
 
             }
           }
+          if(queryNotEmpty) {
+            query['$and'].push(queryTemp);
+          }
         }
         else if(filters[ii].key ==='size') {
-          query.size ={};
+          queryTemp ={};
+          queryNotEmpty =false;
+          queryTemp.size ={};
           if(filters[ii].val.min !==undefined) {
-            query.size['$gte'] =filters[ii].val.min;
+            queryTemp.size['$gte'] =filters[ii].val.min;
+            queryNotEmpty =true;
           }
           if(filters[ii].val.max !==undefined) {
-            query.size['$lte'] =filters[ii].val.max;
+            queryTemp.size['$lte'] =filters[ii].val.max;
+            queryNotEmpty =true;
+          }
+          if(queryNotEmpty) {
+            query['$and'].push(queryTemp);
           }
         }
         else if(filters[ii].key ==='visits') {
-          query.visits ={};
+          queryTemp ={};
+          queryNotEmpty =false;
+          queryTemp.visits ={};
           if(filters[ii].val.min !==undefined) {
-            query.visits['$gte'] =filters[ii].val.min;
+            queryTemp.visits['$gte'] =filters[ii].val.min;
+            queryNotEmpty =true;
           }
           if(filters[ii].val.max !==undefined) {
-            query.visits['$lte'] =filters[ii].val.max;
+            queryTemp.visits['$lte'] =filters[ii].val.max;
+            queryNotEmpty =true;
+          }
+          if(queryNotEmpty) {
+            query['$and'].push(queryTemp);
           }
         }
         else if(filters[ii].key ==='tags') {
           /*
-          db.organizations.find({
-  '$and': [
-    {
-      'tags': {
-        '$elemMatch': {
-          tagId: 'umFWWE6qbHfvprwfA',
-          category: 'skills'
+          db.organizations.find({'$and': [ {'tags': {'$elemMatch': {tagId: { $in: ['umFWWE6qbHfvprwfA'] }, category: { $in: ['skills'] } } } }, { 'tags': { '$elemMatch': { tagId: 'B3dKzeNDxJdHw3Ykd' } } }, { name: 'insert5 edit' } ] },{tags:1, name:1}).pretty();
+          
+          //works even without the (outer) $and, even though mongoDB docs say it should not? Though note it only returns ONE for elemMatch (though that's not a big deal in this case so is fine?)
+          db.organizations.find( { 'tags': { '$elemMatch': { tagId: { $in: ['umFWWE6qbHfvprwfA', 'B3dKzeNDxJdHw3Ykd'] },  category: { $in: ['skills'] } } } }, { 'tags': { '$elemMatch': { tagId: 'B3dKzeNDxJdHw3Ykd' } } }, { name: 'insert5 edit' } ,{tags:1, name:1}).pretty();
+          */
+          var tags =filters[ii].val;
+          var elemMatch, tag1;
+          for(tt =0; tt<tags.length; tt++) {
+              elemMatch ={};    //reset
+              tag1 =tags[tt];
+              elemMatch.tagId ={
+                '$in': tag1.tagId
+              };
+              if(tag1.category !==undefined) {
+                elemMatch.category ={
+                  '$in': tag1.category
+                };
+              }
+              if(tag1.status !==undefined && tag1.status && tag1.status !=='any') {
+                elemMatch.status =tag1.status;
+              }
+              if(tag1.ratingSelfMin !==undefined || tag1.ratingSelfMax !==undefined) {
+                elemMatch.rating ={};
+                if(tag1.ratingSelfMin !==undefined) {
+                  elemMatch.rating['$gte'] =tag1.ratingSelfMin;
+                }
+                if(tag1.ratingSelfMax !==undefined) {
+                  elemMatch.rating['$lte'] =tag1.ratingSelfMax;
+                }
+              }
+              if(tag1.ratingOtherMin !==undefined || tag1.ratingOtherMax !==undefined) {
+                elemMatch.ratingOther ={};
+                if(tag1.ratingOtherMin !==undefined) {
+                  elemMatch.ratingOther['$gte'] =tag1.ratingOtherMin;
+                }
+                if(tag1.ratingOtherMax !==undefined) {
+                  elemMatch.ratingOther['$lte'] =tag1.ratingOtherMax;
+                }
+              }
+              queryTemp ={
+                tags: {
+                  '$elemMatch': elemMatch
+                }
+              };
+              query['$and'].push(queryTemp);
+          }
         }
       }
-    },
-    {
-      'tags': {
-        '$elemMatch': {
-          tagId: 'B3dKzeNDxJdHw3Ykd'
-        }
-      }
-    },
-    {
-      name: 'insert5 edit'
     }
-  ]
-},{tags:1, name:1}).pretty()
-
-db.organizations.find(
-  {
-    'tags': {
-      '$elemMatch': {
-        tagId: 'umFWWE6qbHfvprwfA',
-        category: 'skills'
-      }
-    }
-  },
-  {
-    'tags': {
-      '$elemMatch': {
-        tagId: 'B3dKzeNDxJdHw3Ykd'
-      }
-    }
-  },
-  {
-    name: 'insert5 edit'
-  }
-,{tags:1, name:1}).pretty()
-*/
-          // query.tags ={
-          //   '$and': []
-          // };
-          // var tags =filters[ii].val;
-          // var subQuery ={};
-          // for(tt =0; tt<tags.length; tt++) {
-          //   subQuery.
-          //   query.tags['$and'].push(subQuery);
-          // }
-        }
-      }
+    if(!query['$and'].length) {
+      query ={};
     }
     return query;
   };
@@ -465,8 +487,8 @@ db.organizations.find(
         }
       },
       {
-        template: 'orgsFilterTag',
-        key: 'tag',
+        template: 'orgsFilterTags',
+        key: 'tags',
         val: {
           tags: [],
           category: [],
@@ -523,11 +545,17 @@ db.organizations.find(
     templateInst.filters.set(filters);
 
     //clear html fields / inputs
-    var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input', '.orgs-filter-size-min-input', '.orgs-filter-size-max-input', '.orgs-filter-visits-min-input', '.orgs-filter-visits-max-input'];    //hardcoded must match html classes   //@todo - tags
-    var ele;
-    for(ii =0; ii<selectors.length; ii++) {
-      ele =templateInst.find(selectors[ii]);
-      ele.value ='';
-    }
+    var formId =templateInst.ids.get().form;
+    AutoForm.resetForm(formId, templateInst);
+    //clear out tags as well
+    var optsAutocomplete =templateInst.optsAutocomplete.get();
+    lmAfAutocomplete.removeAllVals({optsInstid:optsAutocomplete.instid});
+
+    // var selectors =['.orgs-filter-name-input', '.orgs-filter-location-radius-input', '.orgs-filter-location-input', '.orgs-filter-location-remote-input', '.orgs-filter-size-min-input', '.orgs-filter-size-max-input', '.orgs-filter-visits-min-input', '.orgs-filter-visits-max-input'];    //hardcoded must match html classes
+    // var ele;
+    // for(ii =0; ii<selectors.length; ii++) {
+    //   ele =templateInst.find(selectors[ii]);
+    //   ele.value ='';
+    // }
   };
 }
