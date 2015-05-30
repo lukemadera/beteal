@@ -99,7 +99,7 @@ Meteor.methods({
                 status =doc.$set.tags[ii].status;
               }
 
-              if(doc.$set.tags[ii]._id !==undefined) {
+              if(doc.$set.tags[ii]._id !==undefined && org.tags !==undefined && org.tags.length) {
                 index1 =notoriiArray.findArrayIndex(org.tags, '_id', doc.$set.tags[ii]._id, {});
                 if(index1 >-1) {
                   var key ='tags.'+index1;
@@ -116,13 +116,15 @@ Meteor.methods({
           }
 
           //pull
-          for(ii =0; ii<org.tags.length; ii++) {
-            //do NOT want to remove unless a match for the current type (category + status)   //@todo - un hardcode this and have the form / package pass back a list of ids to remove and just remove those. More robust and better for performance.
-            if(org.tags[ii].category ===category && org.tags[ii].status ===status) {
-              index1 =notoriiArray.findArrayIndex(doc.$set.tags, '_id', org.tags[ii]._id, {});
-              //not found
-              if(index1 <0) {
-                addPullLocal(org.tags[ii], {});
+          if(org.tags !==undefined && org.tags.length) {
+            for(ii =0; ii<org.tags.length; ii++) {
+              //do NOT want to remove unless a match for the current type (category + status)   //@todo - un hardcode this and have the form / package pass back a list of ids to remove and just remove those. More robust and better for performance.
+              if(org.tags[ii].category ===category && org.tags[ii].status ===status) {
+                index1 =notoriiArray.findArrayIndex(doc.$set.tags, '_id', org.tags[ii]._id, {});
+                //not found
+                if(index1 <0) {
+                  addPullLocal(org.tags[ii], {});
+                }
               }
             }
           }
@@ -135,36 +137,38 @@ Meteor.methods({
       }
 
       if(docId) {
-        doc.$set =preSave(doc.$set, {});
-        doc =updateTagsSetLocal(doc, docId, {});
-        var modifier =doc;
-        //can NOT do BOTH $set and $push operations at same time apparently.. so break into two.
-        var modifierPull =false;
-        var modifierPush =false;
-        if(modifier.$pull !==undefined) {
-          modifierPull ={
-            '$pull': EJSON.clone(modifier.$pull)
-          };
-          delete modifier.$pull;
-        }
-        if(modifier.$push !==undefined) {
-          modifierPush ={
-            '$push': EJSON.clone(modifier.$push)
-          };
-          delete modifier.$push;
-        }
-        //order matters here - FIRST set then pull then push
-        if(modifier.$set !==undefined) {
-          OrganizationsCollection.update({_id:docId}, modifier);
-        }
-        if(modifierPull) {
-          OrganizationsCollection.update({_id:docId}, modifierPull);
-        }
-        if(modifierPush) {
-          OrganizationsCollection.update({_id:docId}, modifierPush);
-        }
+        if(doc.$set !==undefined) {
+          doc.$set =preSave(doc.$set, {});
+          doc =updateTagsSetLocal(doc, docId, {});
+          var modifier =doc;
+          //can NOT do BOTH $set and $push operations at same time apparently.. so break into two.
+          var modifierPull =false;
+          var modifierPush =false;
+          if(modifier.$pull !==undefined) {
+            modifierPull ={
+              '$pull': EJSON.clone(modifier.$pull)
+            };
+            delete modifier.$pull;
+          }
+          if(modifier.$push !==undefined) {
+            modifierPush ={
+              '$push': EJSON.clone(modifier.$push)
+            };
+            delete modifier.$push;
+          }
+          //order matters here - FIRST set then pull then push
+          if(modifier.$set !==undefined) {
+            OrganizationsCollection.update({_id:docId}, modifier);
+          }
+          if(modifierPull) {
+            OrganizationsCollection.update({_id:docId}, modifierPull);
+          }
+          if(modifierPush) {
+            OrganizationsCollection.update({_id:docId}, modifierPush);
+          }
 
-        ret.organization._id =docId;
+          ret.organization._id =docId;
+        }
       }
       else {
         if(doc.name ===undefined) {

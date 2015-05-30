@@ -21,7 +21,7 @@ if(Meteor.isClient) {
     var xx;
     for(xx in orgsObj.inst) {
       if(orgsObj.inst[xx].templateInst ===templateInst) {
-        delete orgObj.inst[xx];
+        delete orgsObj.inst[xx];
         break;
       }
     }
