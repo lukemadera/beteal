@@ -31,7 +31,7 @@ Meteor.methods({
           if(doc[key] !==undefined && doc[key].length) {
             for(ii =(doc[key].length-1); ii>=0; ii--) {
               if(doc[key][ii] ===undefined || !doc[key][ii]) {
-                doc[key] =nrArray.remove(doc[key], ii);
+                doc[key] =notoriiArray.remove(doc[key], ii);
               }
             }
           }
@@ -100,7 +100,7 @@ Meteor.methods({
               }
 
               if(doc.$set.tags[ii]._id !==undefined) {
-                index1 =nrArray.findArrayIndex(org.tags, '_id', doc.$set.tags[ii]._id, {});
+                index1 =notoriiArray.findArrayIndex(org.tags, '_id', doc.$set.tags[ii]._id, {});
                 if(index1 >-1) {
                   var key ='tags.'+index1;
                   doc.$set[key] =doc.$set.tags[ii];
@@ -119,7 +119,7 @@ Meteor.methods({
           for(ii =0; ii<org.tags.length; ii++) {
             //do NOT want to remove unless a match for the current type (category + status)   //@todo - un hardcode this and have the form / package pass back a list of ids to remove and just remove those. More robust and better for performance.
             if(org.tags[ii].category ===category && org.tags[ii].status ===status) {
-              index1 =nrArray.findArrayIndex(doc.$set.tags, '_id', org.tags[ii]._id, {});
+              index1 =notoriiArray.findArrayIndex(doc.$set.tags, '_id', org.tags[ii]._id, {});
               //not found
               if(index1 <0) {
                 addPullLocal(org.tags[ii], {});
@@ -202,7 +202,7 @@ if(Meteor.isClient) {
       var ii;
       for(ii =(tags.length-1); ii>=0; ii--) {
         if(tags[ii].category !==category || tags[ii].status !==status) {
-          tags =nrArray.remove(tags, ii);
+          tags =notoriiArray.remove(tags, ii);
         }
       }
     }

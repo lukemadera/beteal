@@ -509,7 +509,7 @@ if(Meteor.isClient) {
   orgsObj.setFilter =function(key, val, params) {
     var templateInst =this.getMainTemplate({});
     var filters =templateInst.filters.get();
-    var index1 =nrArray.findArrayIndex(filters, 'key', key, {});
+    var index1 =notoriiArray.findArrayIndex(filters, 'key', key, {});
     filters[index1].val =val;
     filters[index1].active =true;
     filters[index1].classes.visibility ='visible';
@@ -520,7 +520,7 @@ if(Meteor.isClient) {
     var templateInst =this.getMainTemplate({});
     var filters =templateInst.filters.get();
     var showFiltersInactive =templateInst.showFiltersInactive.get();
-    var index1 =nrArray.findArrayIndex(filters, 'key', key, {});
+    var index1 =notoriiArray.findArrayIndex(filters, 'key', key, {});
     filters =this.unsetOneFilter(index1, filters, showFiltersInactive, {});
     templateInst.filters.set(filters);
   };
