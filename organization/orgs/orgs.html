@@ -9,24 +9,26 @@
 		</div>
 	</div>
 	{{#if showFilters}}
-	  <div class='orgs-filters'>
-	    {{#autoForm schema="OrgsFiltersSchema" id=ids.form resetOnSuccess=false }}
-	      {{#each filters}}
-	        <div class='list padding {{classes.visibility}}'>
-	          {{> Template.dynamic template=template}}
-	        </div>
-	      {{/each}}
-	      {{#unless showFiltersInactive.visible}}
-	        <div class='padding'>
-	          <span class='orgs-filters-show-inactive btn-link'>{{showFiltersInactive.html}}</span>
-	        </div>
-	      {{/unless}}
-	      <div class='center margin-t padding-lr'>
-	        <button type="submit" class='btn btn-primary'>Search</button>
-	        <div class='orgs-filters-clear-all btn margin-l'>Clear</div>
-	      </div>
-	    {{/autoForm}}
-	  </div>
+		<div class='orgs-section'>
+		  <div class='orgs-filters'>
+		    {{#autoForm schema="OrgsFiltersSchema" id=ids.form resetOnSuccess=false }}
+		      {{#each filters}}
+		        <div class='list padding {{classes.visibility}}'>
+		          {{> Template.dynamic template=template}}
+		        </div>
+		      {{/each}}
+		      {{#unless showFiltersInactive.visible}}
+		        <div class='padding'>
+		          <span class='orgs-filters-show-inactive btn-link'>{{showFiltersInactive.html}}</span>
+		        </div>
+		      {{/unless}}
+		      <div class='center margin-t padding-lr'>
+		        <button type="submit" class='btn btn-primary'>Search</button>
+		        <div class='orgs-filters-clear-all btn margin-l'>Clear</div>
+		      </div>
+		    {{/autoForm}}
+		  </div>
+		</div>
   {{/if}}
 
   {{#if orgs.hasOrgs}}
