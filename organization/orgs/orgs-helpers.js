@@ -203,11 +203,28 @@ if(Meteor.isClient) {
     }
     return locFormatted;
   };
-
+	/**
+	Searches orgs db for orgs filtered by the query
+	@toc .
+	@method orgsObj.getOrgs(query, params)
+	@param {Object} params
+		@param {Object} query
+		@param {Object} params
+	@return {Object} 
+		@param {Object} [orgs] list of orgs matching the query (or all if no match)
+		@param {boolean} match whether or not the results are based on a match
+	*/
   orgsObj.getOrgs =function(query, params) {
     var templateInst =this.getMainTemplate({});
     var orgs =OrganizationsCollection.find(query).fetch();
     var ii;
+    var matched = true;
+
+    // if the query results in no match, we show all orgs, but indicate that there was no match
+    if (orgs.length === 0) {
+    	orgs = OrganizationsCollection.find().fetch();
+    	matched = false;
+    }
     for(ii =0; ii<orgs.length; ii++) {
       orgs[ii].xDisplay ={
         locationFormatted: '',
@@ -218,8 +235,11 @@ if(Meteor.isClient) {
         orgs[ii].xDisplay.links =orgs[ii].links[0].url;
       }
     }
-    console.log('query: ', query, 'orgs length: ', orgs.length);
-    return orgs;
+    console.log('query: ', query, 'orgs length: ', orgs.length, 'matched: ', matched);
+    return {
+    	orgs: orgs,
+    	match: matched
+    };
   };
 
   orgsObj.formQuery =function(params) {
@@ -446,7 +466,12 @@ if(Meteor.isClient) {
         };
       }
       if(!filters[ii].active) {
-        filters[ii].classes.visibility =classVisibility;
+      	if (filters[ii].defaultVisible) {
+      		filters[ii].classes.visibility ='visible';
+      	}
+      	else {
+      		filters[ii].classes.visibility =classVisibility;
+      	}
       }
     }
 
@@ -454,12 +479,43 @@ if(Meteor.isClient) {
     templateInst.showFiltersInactive.set(showFiltersInactive);
   };
 
+  orgsObj.initShowFilters = function(params) {
+  	var templateInst =this.getMainTemplate({});
+    var showFiltersInactive =templateInst.showFiltersInactive.get();
+    showFiltersInactive.visible =false;
+    
+    
+    showFiltersInactive.html ='Show more filters';
+
+    var filters =templateInst.filters.get();
+    var ii;
+    for(ii =0; ii<filters.length; ii++) {
+      //check if need to init
+      if(filters[ii].active ===undefined) {
+        filters[ii].active =false;
+        filters[ii].classes ={
+          visibility: 'hidden'
+        };
+      }
+      if(filters[ii].defaultVisible) {
+        filters[ii].classes.visibility ='visible';
+      }
+      else {
+        filters[ii].classes.visibility ='hidden';
+      }
+    }
+
+    templateInst.filters.set(filters);
+    templateInst.showFiltersInactive.set(showFiltersInactive);
+  }
+
   orgsObj.initFilters =function(params) {
     var filters =[
       {
         template: 'orgsFilterName',
         key: 'name',
-        val: ''
+        val: '',
+        defaultVisible: true
       },
       {
         template: 'orgsFilterLocation',
@@ -468,7 +524,8 @@ if(Meteor.isClient) {
           location: {},
           radius: 0,
           remote: ''
-        }
+        },
+        defaultVisible: true
       },
       {
         template: 'orgsFilterSize',
@@ -476,7 +533,8 @@ if(Meteor.isClient) {
         val: {
           min: '',
           max: ''
-        }
+        },
+        defaultVisible: false
       },
       {
         template: 'orgsFilterVisits',
@@ -484,7 +542,8 @@ if(Meteor.isClient) {
         val: {
           min: '',
           max: ''
-        }
+        },
+        defaultVisible: false
       },
       {
         template: 'orgsFilterTags',
@@ -497,7 +556,8 @@ if(Meteor.isClient) {
           ratingSelfMax: '',
           ratingOtherMin: '',
           ratingOtherMax: ''
-        }
+        },
+        defaultVisible: false
       },
     ];
 

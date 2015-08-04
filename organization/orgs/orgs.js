@@ -77,13 +77,14 @@ if(Meteor.isServer) {
 }
 
 if(Meteor.isClient) {
-  
+  var showFilters = new ReactiveVar(false);
   Template.orgs.created =function() {
     var id1 ="orgs"+(Math.random() + 1).toString(36).substring(7);
     var ids ={
       form: id1+"Form"
     };
     this.ids = new ReactiveVar(ids);
+    
 
     var instid1 =id1+"Autocomplete";
     this.optsAutocomplete =new ReactiveVar({
@@ -125,13 +126,14 @@ if(Meteor.isClient) {
 
   Template.orgs.helpers({
     orgs: function() {
-      var orgs =Template.instance().orgs.get();
+      var orgs =Template.instance().orgs.get().orgs;
       var hasOrgs =false;
       if(orgs.length >0) {
         hasOrgs =true;
       }
       return {
         orgs: orgs,
+        matched: Template.instance().orgs.get().match,
         hasOrgs: hasOrgs
       };
     },
@@ -143,6 +145,9 @@ if(Meteor.isClient) {
     },
     showFiltersInactive: function() {
       return Template.instance().showFiltersInactive.get();
+    },
+    showFilters: function() {
+    	return showFilters.get();
     }
   });
 
@@ -153,6 +158,13 @@ if(Meteor.isClient) {
     'click .orgs-filters-clear-all': function(evt, template) {
       orgsObj.unsetAllFilters({});
       orgsObj.toggleShowInactiveFilters({action:'show'});
+    },
+    'click .show-hide-filters': function() {
+    	var filterVisStatus = showFilters.get()
+    	showFilters.set(!filterVisStatus);
+    	if (!filterVisStatus) {
+    		orgsObj.initShowFilters({action:'show'});
+    	}
     }
   });
 

@@ -1,22 +1,45 @@
 <template name="orgs">
-  <div class='orgs-filters'>
-    {{#autoForm schema="OrgsFiltersSchema" id=ids.form resetOnSuccess=false }}
-      {{#each filters}}
-        <div class='list padding {{classes.visibility}}'>
-          {{> Template.dynamic template=template}}
-        </div>
-      {{/each}}
-      {{#unless showFiltersInactive.visible}}
-        <div class='padding'>
-          <span class='orgs-filters-show-inactive btn-link'>{{showFiltersInactive.html}}</span>
-        </div>
-      {{/unless}}
-      <div class='margin-t padding-lr'>
-        <button type="submit" class='btn btn-primary'>Search</button>
-        <div class='orgs-filters-clear-all btn margin-l'>Clear</div>
-      </div>
-    {{/autoForm}}
-  </div>
+	<div class="center margin-t">
+		<div class='btn btn-primary show-hide-filters'>
+			{{#unless showFilters}}
+				Filter these orgs
+			{{else}}
+				Hide Filters
+			{{/unless}}
+		</div>
+	</div>
+	{{#if showFilters}}
+	  <div class='orgs-filters'>
+	    {{#autoForm schema="OrgsFiltersSchema" id=ids.form resetOnSuccess=false }}
+	      {{#each filters}}
+	        <div class='list padding {{classes.visibility}}'>
+	          {{> Template.dynamic template=template}}
+	        </div>
+	      {{/each}}
+	      {{#unless showFiltersInactive.visible}}
+	        <div class='padding'>
+	          <span class='orgs-filters-show-inactive btn-link'>{{showFiltersInactive.html}}</span>
+	        </div>
+	      {{/unless}}
+	      <div class='margin-t padding-lr'>
+	        <button type="submit" class='btn btn-primary'>Search</button>
+	        <div class='orgs-filters-clear-all btn margin-l'>Clear</div>
+	      </div>
+	    {{/autoForm}}
+	  </div>
+  {{/if}}
+
+  {{#if orgs.hasOrgs}}
+  	{{#unless orgs.matched}}
+  		<div class='margin-t center'>
+	      <div>No results.. Try broadening your search criteria or <a class='' href='/org-edit'>add a new organization</a>. Below are all the orgs we have in our system</div>
+	    </div>
+  	{{/unless}}
+  {{else}}
+    <div class='margin-t center'>
+      <div>No results.. Try broadening your search criteria or <a class='' href='/org-edit'>add a new organization</a>.</div>
+    </div>
+  {{/if}}
 
   <div class='orgs-results margin-b'>
     {{#each orgs.orgs}}
@@ -30,13 +53,6 @@
       </div>
     {{/each}}
   </div>
-
-  {{#if orgs.hasOrgs}}
-  {{else}}
-    <div class='margin-t center'>
-      <div>No results.. Try broadening your search criteria or <a class='' href='/org-edit'>add a new organization</a>.</div>
-    </div>
-  {{/if}}
   
 </template>
 
