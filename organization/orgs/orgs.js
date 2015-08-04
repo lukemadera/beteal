@@ -157,7 +157,8 @@ if(Meteor.isClient) {
     },
     'click .orgs-filters-clear-all': function(evt, template) {
       orgsObj.unsetAllFilters({});
-      orgsObj.toggleShowInactiveFilters({action:'show'});
+      // orgsObj.toggleShowInactiveFilters({action:'show'});
+      orgsObj.initShowFilters({action:'show'});
     },
     'click .show-hide-filters': function() {
     	var filterVisStatus = showFilters.get()
