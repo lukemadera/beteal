@@ -143,6 +143,29 @@
         }
       }
     ],
+    "jobs": [
+      {
+        "_id": "{String}",
+        "name": "{String} name of he position",
+        "createdAt": "{String} [timestamp YYYY-MM-DD HH:mm:ssZ] 2013-06-13 15:30:00-07:00",
+        "locations": [
+          {
+            "fullAddress": "{String}",
+            "lat": "{Number}",
+            "lng": "{Number}",
+            "street": "{String}",
+            "city": "{String}",
+            "state": "{String} [could be province or region for other countries]",
+            "zip": "{String} [could be postal code for other countries]",
+            "country": "{String}"
+          }
+        ],
+        "remote": "{Boolean} true if the job can be worked remotely",
+        "commitment": "{String} one of 'full', 'part', 'project' (for the commitment level of the job)",
+        "description": "{String} description of the job",
+        "instructions": "{String} Instructions of how the user should apply"
+      }
+    ],
     "purpose": "{String}",
     "description": "{String}",
     "size": "{Number}",

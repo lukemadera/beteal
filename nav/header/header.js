@@ -119,6 +119,9 @@ if(Meteor.isClient){
   navConfig.orgeditskillsseeking =EJSON.clone(navConfig.orgedit);
   navConfig.orgeditskillsseeking.url = 'org-edit/skills-seeking';
 
+  navConfig.orgeditjobs =EJSON.clone(navConfig.orgedit);
+  navConfig.orgeditjobs.url = 'org-edit/jobs';
+
   Session.set('navUpdated', false);
 
   //set default

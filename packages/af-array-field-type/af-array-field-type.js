@@ -24,6 +24,14 @@ if(Meteor.isClient) {
           ratingSelfMax: prefix+'ratingSelfMax',
           ratingOtherMin: prefix+'ratingOtherMin',
           ratingOtherMax: prefix+'ratingOtherMax',
+        },
+        jobs: {
+        	name: prefix+'name',
+        	locations: prefix+'locations',
+        	remote: prefix+'remote',
+        	commitment: prefix+'commitment',
+        	description: prefix+'description',
+        	instructions: prefix+'instructions',
         }
       };
       return names;

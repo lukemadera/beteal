@@ -1,0 +1,20 @@
+<template name="orgEditJobs">
+  <div class='org-edit-subpage-header'>
+    <div class='margin-b'>
+      Do you have any Roles that you need to fill? Post some jobs below to let users know what you're looking for!
+    </div>
+    <!-- <div class='margin-b'>
+      Some suggested ones IF they fit you: 'teal', 'self management', 'wholeness', 'evolutionary purpose', 'benefit corp'.
+    </div> -->
+  </div>
+  
+  <div class='org-edit-form'>
+    {{#autoForm collection="OrganizationsCollection" doc=organization id=ids.form}}
+      {{> afArrayField name="jobs" type="job" label="Job Posting"}}
+
+      <div class='margin-t center'>
+        <button class='btn btn-primary org-edit-save-btn' type='submit'>Save</button>
+      </div>
+    {{/autoForm}}
+  </div>
+</template>

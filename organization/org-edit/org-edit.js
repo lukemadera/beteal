@@ -20,11 +20,23 @@ Meteor.methods({
             doc.tags[ii] =afTag.preSave(doc.tags[ii], {});
           }
         }
+        // custom preSave for doc.jobs
+        if(doc.jobs !==undefined && doc.jobs.length) {
+          var ii;
+          for(ii =0; ii<doc.jobs.length; ii++) {
+            if (doc.jobs[ii]._id === undefined) {
+              doc.jobs[ii]._id = new Mongo.ObjectID().toHexString();
+            }
+            if(doc.jobs[ii].createdAt === undefined) {
+              doc.jobs[ii].createdAt = moment().format('YYYY-MM-DD HH:mm:ssZ');
+            }
+          }
+        }
         return doc;
       }
 
       function removeEmptyArrayItems(doc, params) {
-        var keys =['locations', 'links', 'tags'];
+        var keys =['locations', 'links', 'tags', 'jobs'];
         var kk, ii, key;
         for(kk =0; kk<keys.length; kk++) {
           key =keys[kk];
@@ -183,6 +195,7 @@ Meteor.methods({
         }
       }
     }
+    console.log(ret);
     return ret;
   }
 });
@@ -269,7 +282,8 @@ if(Meteor.isClient) {
             self.done();
           }
         }
-
+        console.log(currentDoc._id);
+        console.log(updateDoc);
         if(currentDoc._id) {
           Meteor.call("saveOrganization", updateDoc, currentDoc._id, function(error, result) {
             callbackLocal(error, result);
@@ -357,6 +371,12 @@ if(Meteor.isClient) {
         title: "Skills Desired",
         template: "orgEditSkillsSeeking",
         link: "org-edit/skills-seeking"+urlSuffix
+      },
+      {
+        key: "jobs",
+        title: "Job Postings",
+        template: "orgEditJobs",
+        link: "org-edit/jobs"+urlSuffix
       }
     ];
 

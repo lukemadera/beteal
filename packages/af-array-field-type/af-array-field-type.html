@@ -43,6 +43,25 @@
         {{#if typeIs ""}}
           {{> afQuickField name=this.name label=false options=afOptionsFromSchema}}
         {{/if}}
+        {{#if typeIs "job"}}
+          {{> afQuickField name=schemaNames.jobs.name label="Position Name" opts=../atts.opts.autocomplete}}
+
+          {{> afArrayField name=schemaNames.jobs.locations label="Location" type="googleplace"}}
+      
+          <div class='flexbox equal'>
+            <div class='flex1'>
+          		{{> afQuickField name=schemaNames.jobs.remote label="Remote" options=../atts.opts.remote class="boolean-one-line"}}    
+            </div>
+            <div class='flex1 margin-l'>
+            	{{> afQuickField name=schemaNames.jobs.commitment label="Commitment Level"  class="orgs-filter-tag-self-rating-min-input"}}
+            </div>
+          </div>
+
+          {{> afQuickField name=schemaNames.jobs.description label="Job Description" options=../atts.opts.description rows=8 class="orgs-filter-tag-self-rating-max-input"}}
+          <div>
+            {{> afQuickField name=schemaNames.jobs.instructions label="How To Apply" options=../atts.opts.instructions rows=4 class="orgs-filter-tag-other-rating-min-input"}}
+          </div>
+        {{/if}}
 
       </div>
     </div>
